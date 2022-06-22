@@ -1,4 +1,4 @@
-package io.hreem.toggler.toggle;
+package io.hreem.toggler.common;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,6 +8,9 @@ import java.util.function.UnaryOperator;
 import javax.enterprise.context.ApplicationScoped;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.hreem.toggler.project.model.Environment;
+import io.hreem.toggler.toggle.model.Toggle;
 
 @ApplicationScoped
 public class Util {

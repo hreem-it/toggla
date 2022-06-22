@@ -1,6 +1,5 @@
 package io.hreem.toggler.toggle;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -14,6 +13,7 @@ import javax.ws.rs.NotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import io.hreem.toggler.common.Util;
 import io.hreem.toggler.toggle.model.Toggle;
 import io.hreem.toggler.toggle.model.Variation;
 import io.hreem.toggler.toggle.model.dto.AddToggleVariationRequest;

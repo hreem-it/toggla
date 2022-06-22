@@ -1,6 +1,7 @@
-package io.hreem.toggler.toggle.provider;
+package io.hreem.toggler.common;
 
 import javax.annotation.Priority;
+import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Context;
@@ -10,6 +11,7 @@ import javax.ws.rs.ext.Provider;
 
 import org.jboss.logging.Logger;
 
+import io.hreem.toggler.project.Service;
 import io.vertx.core.http.HttpServerRequest;
 
 @Provider
@@ -22,6 +24,9 @@ public class AuthenticationInterceptor implements ContainerRequestFilter {
 
     @Context
     HttpServerRequest request;
+
+    @Inject
+    Service projectService;
 
     @Override
     public void filter(ContainerRequestContext context) {
@@ -36,13 +41,18 @@ public class AuthenticationInterceptor implements ContainerRequestFilter {
         if (secretHeader == null || secretHeader.isEmpty()) {
             context.abortWith(Response.status(Response.Status.UNAUTHORIZED)
                     .header("reason", "Missing api-secret header in request.").build());
+            return;
         }
 
-        // Verify API Secret is enabled and tied to a project
-        // TODO
+        // Verify API is enabled and tied to a project
+        final var projectKey = projectService.getProjectKeyFromApiKey(secretHeader);
+        final var project = projectService.getProject(projectKey, false);
+        final String environment = project.apiKeys().stream()
+                .filter(key -> key.apiKey().toString().equals(secretHeader))
+                .findFirst().get().env().toString();
 
         // Populate project key into request
-        context.getHeaders().add("project-key", "compass");
-        LOG.infof("--> project-key: %s", "compass");
+        context.getHeaders().add("project-key", projectKey + ":" + environment);
+        LOG.infof("--> project-key: %s", projectKey);
     }
 }
