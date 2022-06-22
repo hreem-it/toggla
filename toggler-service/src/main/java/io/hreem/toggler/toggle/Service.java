@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -14,7 +16,12 @@ import io.hreem.toggler.toggle.model.Toggle;
 import io.hreem.toggler.toggle.model.Variation;
 import io.hreem.toggler.toggle.model.dto.AddToggleVariationRequest;
 import io.hreem.toggler.toggle.model.dto.NewToggleRequest;
+import io.quarkus.cache.CacheInvalidate;
+import io.quarkus.cache.CacheKey;
+import io.quarkus.cache.CacheResult;
 import io.quarkus.redis.client.RedisClient;
+import io.quarkus.redis.client.reactive.ReactiveRedisClient;
+import io.smallrye.mutiny.Uni;
 
 @RequestScoped
 public class Service {
@@ -24,6 +31,9 @@ public class Service {
 
     @Inject
     RedisClient redis;
+
+    @Inject
+    ReactiveRedisClient reactiveRedisClient;
 
     /**
      * Toggle an existing feature-toggle.
@@ -36,21 +46,24 @@ public class Service {
      * @throws JsonProcessingException If the feature-toggle or variation key is
      *                                 invalid.
      */
-    public void toggle(String projectKey, String key, String variationKey)
+    @CacheInvalidate(cacheName = "toggle")
+    @CacheInvalidate(cacheName = "toggle-list")
+    @CacheInvalidate(cacheName = "toggle-status")
+    public void toggle(@CacheKey String projectKey, @CacheKey String key, @CacheKey String variationKey)
             throws JsonMappingException, JsonProcessingException {
         final var variationKeyOrDefault = variationKey != null ? variationKey : "default";
 
         // Find toggle
         final var toggle = getToggle(projectKey, key);
         if (toggle == null)
-            throw new IllegalArgumentException("Toggle with key " + key + " does not exist");
+            throw new NotFoundException("Toggle with key " + key + " does not exist");
 
         // Find variation
         final var optVariationToToggle = toggle.variations().stream()
                 .filter(v -> v.variationKey().equals(variationKeyOrDefault))
                 .findFirst();
         final var variation = optVariationToToggle
-                .orElseThrow(() -> new IllegalArgumentException(
+                .orElseThrow(() -> new NotFoundException(
                         "Toggle with key " + key + " and variation " + variationKeyOrDefault + " does not exist"));
 
         // Toggle variation
@@ -73,18 +86,21 @@ public class Service {
      * @throws JsonProcessingException
      * @throws JsonMappingException
      */
-    public void addToggleVariation(AddToggleVariationRequest request, String projectKey, String key)
+    @CacheInvalidate(cacheName = "toggle")
+    @CacheInvalidate(cacheName = "toggle-list")
+    @CacheInvalidate(cacheName = "toggle-status")
+    public void addToggleVariation(AddToggleVariationRequest request, @CacheKey String projectKey, @CacheKey String key)
             throws JsonMappingException, JsonProcessingException {
         // Find toggle
         final var toggle = getToggle(projectKey, key);
         if (toggle == null)
-            throw new IllegalArgumentException("Toggle with key " + key + " does not exist");
+            throw new NotFoundException("Toggle with key " + key + " does not exist");
 
         // Verify no variation with the same key exists
         final var variationKeyAlreadyExists = toggle.variations().stream()
                 .anyMatch(v -> v.variationKey().equals(request.variationKey()));
         if (variationKeyAlreadyExists)
-            throw new IllegalArgumentException("Toggle with key " + key + " and variation " + request.variationKey()
+            throw new BadRequestException("Toggle with key " + key + " and variation " + request.variationKey()
                     + " already exists");
 
         // Add new variation
@@ -99,8 +115,38 @@ public class Service {
         redis.set(List.of(projectKey + ":" + key, util.convert(toggle)));
     }
 
-    public void removeToggleVariation(String projectKey, String key, String variationKey) {
+    /**
+     * Remove a feature-toggle variation.
+     * 
+     * @param projectKey   The project key.
+     * @param key          The feature-toggle key.
+     * @param variationKey The variation key.
+     * @throws JsonProcessingException If the feature-toggle or variation key is
+     * @throws JsonMappingException    If the feature-toggle or variation key is
+     */
+    @CacheInvalidate(cacheName = "toggle")
+    @CacheInvalidate(cacheName = "toggle-list")
+    @CacheInvalidate(cacheName = "toggle-status")
+    public void removeToggleVariation(@CacheKey String projectKey, @CacheKey String key, String variationKey)
+            throws JsonMappingException, JsonProcessingException {
+        // Find toggle
+        final var toggle = getToggle(projectKey, key);
+        if (toggle == null)
+            throw new NotFoundException("Toggle with key " + key + " does not exist");
 
+        // Verify variation exists
+        final var optVariationToRemove = toggle.variations().stream()
+                .filter(v -> v.variationKey().equals(variationKey))
+                .findFirst();
+        final var variation = optVariationToRemove
+                .orElseThrow(() -> new NotFoundException(
+                        "Toggle with key " + key + " and variation " + variationKey + " does not exist"));
+
+        // Remove variation
+        toggle.variations().remove(variation);
+
+        // Save toggle
+        redis.set(List.of(projectKey + ":" + key, util.convert(toggle)));
     }
 
     /**
@@ -110,7 +156,10 @@ public class Service {
      * @param projectKey the project key
      * @throws JsonProcessingException
      */
-    public void createNewToggle(NewToggleRequest request, String projectKey) throws JsonProcessingException {
+    @CacheInvalidate(cacheName = "toggle")
+    @CacheInvalidate(cacheName = "toggle-list")
+    @CacheInvalidate(cacheName = "toggle-status")
+    public void createNewToggle(NewToggleRequest request, @CacheKey String projectKey) throws JsonProcessingException {
         // Create a new toggle configuration
         final var newToggle = Toggle.builder()
                 .key(request.key())
@@ -124,10 +173,20 @@ public class Service {
 
         // Check that no toggle with the same key already exists
         if (redis.exists(List.of(projectKey + ":" + newToggle.key())).toBoolean())
-            throw new IllegalArgumentException("A toggle with the key " + newToggle.key() + " already exists");
+            throw new BadRequestException("A toggle with the key " + newToggle.key() + " already exists");
 
         // Save the toggle configuration to Redis
         redis.set(List.of(projectKey + ":" + newToggle.key(), util.convert(newToggle)));
+    }
+
+    @CacheInvalidate(cacheName = "toggle")
+    @CacheInvalidate(cacheName = "toggle-list")
+    @CacheInvalidate(cacheName = "toggle-status")
+    public void removeToggle(@CacheKey String projectKey, @CacheKey String key) {
+        // Check that a toggle with the key exists
+        if (redis.exists(List.of(projectKey + ":" + key)).toBoolean())
+            redis.del(List.of(projectKey + ":" + key));
+        throw new NotFoundException("No toggle with the key " + key + " exists");
     }
 
     /**
@@ -139,7 +198,9 @@ public class Service {
      * @throws JsonMappingException
      * @throws JsonProcessingException
      */
-    public Toggle getToggle(String projectKey, String toggleKey) throws JsonMappingException, JsonProcessingException {
+    @CacheResult(cacheName = "toggle")
+    public Toggle getToggle(@CacheKey String projectKey, @CacheKey String toggleKey)
+            throws JsonMappingException, JsonProcessingException {
         // Get the toggle configuration from Redis
         final var getResponse = redis.get(projectKey + ":" + toggleKey);
         if (getResponse == null)
@@ -155,7 +216,8 @@ public class Service {
      * @param projectKey The project key to get toggles for.
      * @return List of toggles.
      */
-    public List<Toggle> getAllToggles(String projectKey) {
+    @CacheResult(cacheName = "toggle-list")
+    public List<Toggle> getAllToggles(@CacheKey String projectKey) {
         final var getAllResponse = redis.keys(projectKey + ":*");
         final var toggles = getAllResponse.stream()
                 .map(toggleKeyResponse -> toggleKeyResponse.toString())
@@ -165,5 +227,34 @@ public class Service {
                 .map(toggleResponse -> util.convert(toggleResponse.toString(), Toggle.class))
                 .collect(Collectors.toList());
         return toggles;
+    }
+
+    /***
+     * Non blocking, get toggle status from the datastore for a given project key.
+     * 
+     * @param projectKey   The project key to get toggle status for.
+     * @param key          The toggle key to get status for.
+     * @param variationKey The variation key to get status for.
+     * @return Uni of Boolean, resolves non-blockingly.
+     */
+    @CacheResult(cacheName = "toggle-status")
+    public Uni<Boolean> getToggleStatus(@CacheKey String projectKey, @CacheKey String key,
+            @CacheKey String variationKey) {
+        final var variationKeyOrDefault = variationKey != null ? variationKey : "default";
+        return reactiveRedisClient.get(projectKey + ":" + key)
+                .map(response -> {
+                    if (response == null)
+                        throw new NotFoundException("Toggle with key " + key + " does not exist");
+                    return util.convert(response.toString(), Toggle.class);
+                })
+                .map(toggle -> {
+                    final var variation = toggle.variations().stream()
+                            .filter(v -> v.variationKey().equals(variationKeyOrDefault))
+                            .findFirst()
+                            .orElseThrow(() -> new NotFoundException(
+                                    "Toggle with key " + key + " and variation " + variationKeyOrDefault
+                                            + " does not exist"));
+                    return variation.enabled();
+                });
     }
 }

@@ -4,14 +4,16 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import io.hreem.toggler.toggle.model.Toggle;
 import io.hreem.toggler.toggle.model.Variation;
@@ -34,7 +36,7 @@ public class ToggleServiceTest {
         redis.flushall(List.of());
     }
 
-    @Test 
+    @Test
     public void toggle_should_fail_if_no_toggle_exists_with_the_key_or_variation_key() throws JsonProcessingException {
         // Given
         final var mockProjectKey = "mock-project-key";
@@ -42,9 +44,9 @@ public class ToggleServiceTest {
         final var mockVariationKey = "mock-variation-key";
 
         // When + Then
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> toggleService.toggle(mockProjectKey, mockToggleKey, mockVariationKey))
-            .withMessage("Toggle with key " + mockToggleKey + " does not exist");
+        assertThatThrownBy(() -> toggleService.toggle(mockProjectKey, mockToggleKey, mockVariationKey))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("Toggle with key " + mockToggleKey + " does not exist");
 
         // --------------------------------------------------
 
@@ -57,12 +59,13 @@ public class ToggleServiceTest {
         toggleService.createNewToggle(mockToggle, mockProjectKey);
 
         // When + Then
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> toggleService.toggle(mockProjectKey, mockToggleKey, mockVariationKey))
-            .withMessage("Toggle with key " + mockToggleKey + " and variation " + mockVariationKey + " does not exist");
+        assertThatThrownBy(() -> toggleService.toggle(mockProjectKey, mockToggleKey, mockVariationKey))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(
+                        "Toggle with key " + mockToggleKey + " and variation " + mockVariationKey + " does not exist");
     }
 
-    @Test 
+    @Test
     public void toggle_should_toggle_default_variation() throws JsonProcessingException {
         // Given
         final var mockProjectKey = "mock-project-key";
@@ -81,7 +84,7 @@ public class ToggleServiceTest {
         // When 2
         toggleService.toggle(mockProjectKey, mockToggleKey, "default"); // This time we pass in a variation key.
         final var toggle2 = toggleService.getToggle(mockProjectKey, mockToggleKey);
-        
+
         // Then 1
         assertThat(toggle).isNotNull();
         assertThat(toggle.variations()).hasSize(1);
@@ -96,7 +99,8 @@ public class ToggleServiceTest {
     }
 
     @Test
-    public void addToggleVariation_should_create_if_new_and_fail_if_toggle_variation_already_exists() throws JsonProcessingException {
+    public void addToggleVariation_should_create_if_new_and_fail_if_toggle_variation_already_exists()
+            throws JsonProcessingException {
         // Given
         final var mockProjectKey = "mock-project-key";
         final var mockToggleKey = "mock-toggle-key";
@@ -127,9 +131,44 @@ public class ToggleServiceTest {
         assertThat(toggle.variations().get(1).enabled()).isTrue();
 
         // When 2 + Then 2
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> toggleService.addToggleVariation(variationRequest, mockProjectKey, mockToggleKey))
-                .withMessageContaining("already exists");
+        assertThatThrownBy(() -> toggleService.addToggleVariation(variationRequest, mockProjectKey, mockToggleKey))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("already exists");
+    }
+
+    @Test
+    public void removeToggleVariation_should_remove_if_toggle_with_variation_exists_and_fail_if_not()
+            throws JsonMappingException, JsonProcessingException {
+        // Given
+        final var mockProjectKey = "mock-project-key";
+        final var mockToggleKey = "mock-toggle-key";
+        final var mockVariationKey = "mock-toggle-variation-key";
+        final var mockToggle = NewToggleRequest.builder()
+                .key(mockToggleKey)
+                .description("mock-description")
+                .enabled(false)
+                .build();
+        toggleService.createNewToggle(mockToggle, mockProjectKey);
+
+        final var variationRequest = AddToggleVariationRequest.builder()
+                .variationKey(mockVariationKey)
+                .enabled(true)
+                .build();
+        toggleService.addToggleVariation(variationRequest, mockProjectKey, mockToggleKey);
+
+        // When 1
+        toggleService.removeToggleVariation(mockProjectKey, mockToggleKey, mockVariationKey);
+        final var toggle = toggleService.getToggle(mockProjectKey, mockToggleKey);
+
+        // Then 1
+        assertThat(toggle).isNotNull();
+        assertThat(toggle.variations()).hasSize(1);
+        assertThat(toggle.variations().get(0).variationKey()).isEqualTo("default");
+
+        // When + Then 2
+        assertThatThrownBy(() -> toggleService.removeToggleVariation(mockProjectKey, mockToggleKey, mockVariationKey))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("does not exist");
     }
 
     @Test
@@ -144,9 +183,14 @@ public class ToggleServiceTest {
         toggleService.createNewToggle(mockToggle, mockProjectKey);
 
         // When + Then
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> toggleService.createNewToggle(mockToggle, mockProjectKey))
-                .withMessageContaining("already exists");
+        assertThatThrownBy(() -> toggleService.createNewToggle(mockToggle, mockProjectKey))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("already exists");
+    }
+
+    @Test
+    public void removeToggle_TODO() {
+        // TODO
     }
 
     @Test
@@ -229,6 +273,11 @@ public class ToggleServiceTest {
         // Then
         assertThat(response).isNotNull();
         assertThat(response).hasSize(0);
+    }
+
+    @Test
+    public void getToggleStatus_TODO() {
+        // TODO
     }
 
 }

@@ -1,5 +1,6 @@
 package io.hreem.toggler.toggle.provider;
 
+import javax.annotation.Priority;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Context;
@@ -12,6 +13,7 @@ import org.jboss.logging.Logger;
 import io.vertx.core.http.HttpServerRequest;
 
 @Provider
+@Priority(1000)
 public class AuthenticationInterceptor implements ContainerRequestFilter {
     private static final Logger LOG = Logger.getLogger(AuthenticationInterceptor.class);
 
@@ -37,8 +39,10 @@ public class AuthenticationInterceptor implements ContainerRequestFilter {
         }
 
         // Verify API Secret is enabled and tied to a project
+        // TODO
 
         // Populate project key into request
         context.getHeaders().add("project-key", "compass");
+        LOG.infof("--> project-key: %s", "compass");
     }
 }
