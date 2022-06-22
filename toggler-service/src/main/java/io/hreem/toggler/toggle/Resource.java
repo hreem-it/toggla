@@ -1,6 +1,7 @@
 package io.hreem.toggler.toggle;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -10,8 +11,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,10 +24,13 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import io.hreem.toggler.toggle.model.dto.NewToggleRequest;
 
 @Path("toggles")
-@ApplicationScoped
+@RequestScoped
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class Resource {
+
+    @Context
+    UriInfo uriInfo;
 
     @Inject
     Logger log;
@@ -33,7 +40,8 @@ public class Resource {
 
     @GET
     public Response getToggles(@HeaderParam("project-key") String projectKey) {
-        return Response.ok().build();
+        final var response = toggleService.getAllToggles(projectKey);
+        return Response.ok(response).build();
     }
 
     @GET
@@ -49,7 +57,9 @@ public class Resource {
             throws JsonProcessingException {
         log.infof("Creating a new toggle with key %s for project with key: %s", request.key(), projectKey);
         toggleService.createNewToggle(request, projectKey);
-        return Response.ok().build();
+
+        final var uri = uriInfo.getAbsolutePathBuilder().path(request.key()).build();
+        return Response.created(uri).build();
     }
 
 }

@@ -7,4 +7,8 @@ public record Variation(String variationKey, String description, boolean enabled
     public Variation {
     
     }
+
+    public Object toggle() {
+        return null;
+    }
 }
