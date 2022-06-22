@@ -1,5 +1,7 @@
 package io.hreem.toggler.toggle;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -70,6 +72,8 @@ public class Service {
         final var toggledVariation = Variation.builder()
                 .variationKey(variationKeyOrDefault)
                 .enabled(!variation.enabled())
+                .createdAt(variation.createdAt())
+                .updatedAt(new Date())
                 .build();
         util.replaceIf(toggle.variations(), v -> v.variationKey().equals(variationKeyOrDefault), v -> toggledVariation);
 
@@ -108,6 +112,8 @@ public class Service {
                 .variationKey(request.variationKey())
                 .description(request.description())
                 .enabled(request.enabled())
+                .createdAt(new Date())
+                .updatedAt(new Date())
                 .build();
         toggle.variations().add(newVariation);
 
@@ -164,10 +170,14 @@ public class Service {
         final var newToggle = Toggle.builder()
                 .key(request.key())
                 .description(request.description())
+                .createdAt(new Date())
+                .updatedAt(new Date())
                 .variations(List.of(
                         Variation.builder()
                                 .variationKey("default")
                                 .enabled(request.enabled())
+                                .createdAt(new Date())
+                                .updatedAt(new Date())
                                 .build()))
                 .build();
 
