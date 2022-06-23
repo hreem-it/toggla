@@ -67,7 +67,7 @@ public class Resource {
     @GET
     @Path("/{key}/status")
     @Operation(summary = "Recommended: Get the status of a toggle")
-    public Uni<Boolean> getToggleStatus(@HeaderParam("project-key") String projectKey,
+    public Boolean getToggleStatus(@HeaderParam("project-key") String projectKey,
             @PathParam("key") String key)
             throws JsonMappingException, JsonProcessingException {
         return getToggleStatusForVariation(projectKey, key, "default");
@@ -76,7 +76,7 @@ public class Resource {
     @GET
     @Path("/{key}/{variationKey}/status")
     @Operation(summary = "Recommended: Get the status of a toggle and a variation")
-    public Uni<Boolean> getToggleStatusForVariation(@HeaderParam("project-key") String projectKey,
+    public Boolean getToggleStatusForVariation(@HeaderParam("project-key") String projectKey,
             @PathParam("key") String key, @PathParam("variationKey") String variationKey)
             throws JsonMappingException, JsonProcessingException {
         return toggleService.getToggleStatus(projectKey, key, variationKey);

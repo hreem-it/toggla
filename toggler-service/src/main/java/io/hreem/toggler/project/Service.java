@@ -18,12 +18,17 @@ import io.hreem.toggler.project.model.Project;
 import io.hreem.toggler.project.model.dto.CreateApiKeyRequest;
 import io.hreem.toggler.project.model.dto.CreateProjectRequest;
 import io.quarkus.redis.client.RedisClient;
+import io.quarkus.redis.client.reactive.ReactiveRedisClient;
+import io.smallrye.mutiny.Uni;
 
 @ApplicationScoped
 public class Service {
 
     @Inject
     RedisClient redis;
+
+    @Inject
+    ReactiveRedisClient reactiveRedis;
 
     @Inject
     Util util;
@@ -102,6 +107,20 @@ public class Service {
     }
 
     /**
+     * Verifies if an API key is valid, and returns the project-key if it is.
+     * 
+     * @param apiKey
+     * @return The project key if the API key is valid.
+     */
+    public Uni<String> getProjectKeyFromApiKeyAsync(String apiKey) {
+        final var projectKey = reactiveRedis.get("apiKey:" + apiKey);
+        if (projectKey == null) {
+            throw new ForbiddenException("API key " + apiKey + " does not exist");
+        }
+        return projectKey.map(response -> response.toString());
+    }
+
+    /**
      * Returns the project with all it's API keys obfuscated.
      * 
      * @param projectKey The project key
@@ -131,6 +150,27 @@ public class Service {
         }
 
         return project;
+    }
+
+    public List<Project> getProjects() {
+        final var projects = redis.keys("project:*").stream()
+                .map(projectResponse -> projectResponse.toString())
+                .map(projectKey -> projectKey.split("project:")[1])
+                .parallel()
+                .map(projectKey -> getProject(projectKey, true))
+                .collect(Collectors.toList());
+
+        return projects;
+    }
+
+    public String getProjectEnvironment(String projectKey, String apiKey) {
+        final var project = getProject(projectKey, false);
+        final var matchingKey = project.apiKeys().stream()
+                .filter(key -> key.apiKey().equals(UUID.fromString(apiKey)))
+                .findFirst()
+                .orElseThrow(() -> new ForbiddenException("API key " + apiKey + " does not exist"));
+
+        return matchingKey.env().toString();
     }
 
 }

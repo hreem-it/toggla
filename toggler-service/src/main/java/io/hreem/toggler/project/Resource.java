@@ -6,6 +6,7 @@ import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -35,10 +36,31 @@ public class Resource {
     Service projectService;
 
     @GET
+    public Response getAllProjects() {
+        final var projects = projectService.getProjects();
+        return Response.ok(projects).build();
+    }
+
+    @GET
     @Path("/{projectKey}")
     public Response getProject(@PathParam("projectKey") String projectKey) {
         final var project = projectService.getProject(projectKey, true);
         return Response.ok(project).build();
+    }
+
+    @GET
+    @Path("/verifykey")
+    public Response getProjectKeyByApiKey(@HeaderParam("api-secret") String apiKey) {
+        final var projectKey = projectService.getProjectKeyFromApiKey(apiKey);
+        return Response.ok(projectKey).build();
+    }
+
+    @GET
+    @Path("/{projectKey}/environment")
+    public Response getProjectEnvironment(@PathParam("projectKey") String projectKey,
+            @HeaderParam("api-secret") String apiKey) {
+        final var environment = projectService.getProjectEnvironment(projectKey, apiKey);
+        return Response.ok(environment).build();
     }
 
     @POST

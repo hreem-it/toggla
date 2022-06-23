@@ -18,7 +18,7 @@ import io.hreem.toggler.toggle.model.Toggle;
 import io.hreem.toggler.toggle.model.Variation;
 import io.hreem.toggler.toggle.model.dto.AddToggleVariationRequest;
 import io.hreem.toggler.toggle.model.dto.NewToggleRequest;
-import io.quarkus.cache.CacheInvalidate;
+import io.quarkus.cache.CacheInvalidateAll;
 import io.quarkus.cache.CacheKey;
 import io.quarkus.cache.CacheResult;
 import io.quarkus.redis.client.RedisClient;
@@ -37,6 +37,9 @@ public class Service {
     @Inject
     ReactiveRedisClient reactiveRedisClient;
 
+    @Inject
+    io.hreem.toggler.project.Service projectService;
+
     /**
      * Toggle an existing feature-toggle.
      * 
@@ -48,9 +51,9 @@ public class Service {
      * @throws JsonProcessingException If the feature-toggle or variation key is
      *                                 invalid.
      */
-    @CacheInvalidate(cacheName = "toggle")
-    @CacheInvalidate(cacheName = "toggle-list")
-    @CacheInvalidate(cacheName = "toggle-status")
+    @CacheInvalidateAll(cacheName = "toggle")
+    @CacheInvalidateAll(cacheName = "toggle-list")
+    @CacheInvalidateAll(cacheName = "toggle-status")
     public void toggle(@CacheKey String projectKey, @CacheKey String key, @CacheKey String variationKey)
             throws JsonMappingException, JsonProcessingException {
         final var variationKeyOrDefault = variationKey != null ? variationKey : "default";
@@ -74,6 +77,7 @@ public class Service {
                 .enabled(!variation.enabled())
                 .createdAt(variation.createdAt())
                 .updatedAt(new Date())
+                .description(variation.description())
                 .build();
         util.replaceIf(toggle.variations(), v -> v.variationKey().equals(variationKeyOrDefault), v -> toggledVariation);
 
@@ -90,9 +94,9 @@ public class Service {
      * @throws JsonProcessingException
      * @throws JsonMappingException
      */
-    @CacheInvalidate(cacheName = "toggle")
-    @CacheInvalidate(cacheName = "toggle-list")
-    @CacheInvalidate(cacheName = "toggle-status")
+    @CacheInvalidateAll(cacheName = "toggle")
+    @CacheInvalidateAll(cacheName = "toggle-list")
+    @CacheInvalidateAll(cacheName = "toggle-status")
     public void addToggleVariation(AddToggleVariationRequest request, @CacheKey String projectKey, @CacheKey String key)
             throws JsonMappingException, JsonProcessingException {
         // Find toggle
@@ -130,10 +134,10 @@ public class Service {
      * @throws JsonProcessingException If the feature-toggle or variation key is
      * @throws JsonMappingException    If the feature-toggle or variation key is
      */
-    @CacheInvalidate(cacheName = "toggle")
-    @CacheInvalidate(cacheName = "toggle-list")
-    @CacheInvalidate(cacheName = "toggle-status")
-    public void removeToggleVariation(@CacheKey String projectKey, @CacheKey String key, String variationKey)
+    @CacheInvalidateAll(cacheName = "toggle")
+    @CacheInvalidateAll(cacheName = "toggle-list")
+    @CacheInvalidateAll(cacheName = "toggle-status")
+    public void removeToggleVariation(@CacheKey String projectKey, @CacheKey String key, @CacheKey String variationKey)
             throws JsonMappingException, JsonProcessingException {
         // Find toggle
         final var toggle = getToggle(projectKey, key);
@@ -162,9 +166,9 @@ public class Service {
      * @param projectKey the project key
      * @throws JsonProcessingException
      */
-    @CacheInvalidate(cacheName = "toggle")
-    @CacheInvalidate(cacheName = "toggle-list")
-    @CacheInvalidate(cacheName = "toggle-status")
+    @CacheInvalidateAll(cacheName = "toggle")
+    @CacheInvalidateAll(cacheName = "toggle-list")
+    @CacheInvalidateAll(cacheName = "toggle-status")
     public void createNewToggle(NewToggleRequest request, @CacheKey String projectKey) throws JsonProcessingException {
         // Create a new toggle configuration
         final var newToggle = Toggle.builder()
@@ -189,9 +193,9 @@ public class Service {
         redis.set(List.of(projectKey + ":" + newToggle.key(), util.convert(newToggle)));
     }
 
-    @CacheInvalidate(cacheName = "toggle")
-    @CacheInvalidate(cacheName = "toggle-list")
-    @CacheInvalidate(cacheName = "toggle-status")
+    @CacheInvalidateAll(cacheName = "toggle")
+    @CacheInvalidateAll(cacheName = "toggle-list")
+    @CacheInvalidateAll(cacheName = "toggle-status")
     public void removeToggle(@CacheKey String projectKey, @CacheKey String key) {
         // Check that a toggle with the key exists
         if (redis.exists(List.of(projectKey + ":" + key)).toBoolean())
@@ -240,7 +244,7 @@ public class Service {
     }
 
     /***
-     * Non blocking, get toggle status from the datastore for a given project key.
+     * Get toggle status from the datastore for a given project key.
      * 
      * @param projectKey   The project key to get toggle status for.
      * @param key          The toggle key to get status for.
@@ -248,23 +252,21 @@ public class Service {
      * @return Uni of Boolean, resolves non-blockingly.
      */
     @CacheResult(cacheName = "toggle-status")
-    public Uni<Boolean> getToggleStatus(@CacheKey String projectKey, @CacheKey String key,
+    public Boolean getToggleStatus(@CacheKey String projectKey, @CacheKey String key,
             @CacheKey String variationKey) {
         final var variationKeyOrDefault = variationKey != null ? variationKey : "default";
-        return reactiveRedisClient.get(projectKey + ":" + key)
-                .map(response -> {
-                    if (response == null)
-                        throw new NotFoundException("Toggle with key " + key + " does not exist");
-                    return util.convert(response.toString(), Toggle.class);
-                })
-                .map(toggle -> {
-                    final var variation = toggle.variations().stream()
-                            .filter(v -> v.variationKey().equals(variationKeyOrDefault))
-                            .findFirst()
-                            .orElseThrow(() -> new NotFoundException(
-                                    "Toggle with key " + key + " and variation " + variationKeyOrDefault
-                                            + " does not exist"));
-                    return variation.enabled();
-                });
+        final var response = redis.get(projectKey + ":" + key);
+        if (response == null)
+            throw new NotFoundException("Toggle with key " + key + " does not exist");
+
+        final var toggle = util.convert(response.toString(), Toggle.class);
+
+        final var variation = toggle.variations().stream()
+                .filter(v -> v.variationKey().equals(variationKeyOrDefault))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(
+                        "Toggle with key " + key + " and variation " + variationKeyOrDefault
+                                + " does not exist"));
+        return variation.enabled();
     }
 }
