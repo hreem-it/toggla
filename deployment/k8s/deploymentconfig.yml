@@ -1,0 +1,89 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: toggler-redis-datasource
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: toggler-redis-datasource
+  template:
+    metadata:
+      labels:
+        app: toggler-redis-datasource
+    spec:
+      containers:
+        - name: toggler-redis-datasource
+          image: redis
+          command:
+            - redis-server
+            - "/redis-master/redis.conf"
+          env:
+            - name: MASTER
+              value: "true"
+          ports:
+            - containerPort: 6379
+          resources:
+            limits:
+              cpu: "0.1"
+          volumeMounts:
+            - mountPath: /redis-master-data
+              name: data
+            - mountPath: /redis-master
+              name: config
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: toggler-redis-datasource-volume-claim
+        - name: config
+          configMap:
+            name: toggler-redis-datasource-config
+            items:
+              - key: redis-config
+                path: redis.conf
+            defaultMode: 420
+      restartPolicy: Always
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: toggler-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: toggler-service
+  template:
+    metadata:
+      labels:
+        app: toggler-service
+    spec:
+      containers:
+        - name: toggler-service
+          image: hreemit/toggler-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: toggler-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: toggler-web
+  template:
+    metadata:
+      labels:
+        app: toggler-web
+    spec:
+      containers:
+        - name: toggler-web
+          image: hreemit/toggler-web:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+      restartPolicy: Always
