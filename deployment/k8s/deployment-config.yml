@@ -1,0 +1,55 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: toggler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: toggler
+  template:
+    metadata:
+      labels:
+        app: toggler
+    spec:
+      containers:
+        - name: toggler-web
+          image: hreemit/toggler-web:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+        - name: toggler-service
+          image: hreemit/toggler-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+        - name: toggler-redis-datasource
+          image: redis:latest
+          command:
+            - redis-server
+            - "/redis-master/redis.conf"
+          env:
+            - name: MASTER
+              value: "true"
+          ports:
+            - containerPort: 6379
+          resources:
+            limits:
+              cpu: "0.1"
+          volumeMounts:
+            - mountPath: /redis-master-data
+              name: data
+            - mountPath: /redis-master
+              name: config
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: toggler-redis-datasource-volume-claim
+        - name: config
+          configMap:
+            name: toggler-redis-datasource-config
+            items:
+              - key: redis.conf
+                path: redis.conf
+            defaultMode: 420
+      restartPolicy: Always
