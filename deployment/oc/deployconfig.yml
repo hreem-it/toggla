@@ -1,0 +1,163 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: toggler-service
+    app.kubernetes.io/name: toggler-service
+    app.kubernetes.io/part-of: toggler
+  name: toggler-service
+spec:
+  replicas: 1
+  selector:
+    app: toggler-service
+  template:
+    metadata:
+      labels:
+        app: toggler-service
+    spec:
+      containers:
+        - command:
+            - java
+            - -Dquarkus.http.host=0.0.0.0
+            - -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+            - -jar
+            - /deployments/quarkus-run.jar
+          image: default/toggler-service:latest
+          imagePullPolicy: Always
+          env:
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 1000m
+              memory: 1Gi
+          name: toggler-service
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+  triggers:
+    - type: ConfigChange
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  generation: 1
+  labels:
+    app: toggler-web
+    app.kubernetes.io/name: toggler-web
+    app.kubernetes.io/part-of: toggler
+  name: toggler-web
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    app: toggler-web
+    deploymentconfig: toggler-web
+  strategy:
+    activeDeadlineSeconds: 21600
+    recreateParams:
+      timeoutSeconds: 600
+    resources: { }
+    type: Rolling
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      creationTimestamp: null
+      labels:
+        app: toggler-web
+        deploymentconfig: toggler-web
+    spec:
+      containers:
+        image: default/toggler-web:latest
+        imagePullPolicy: Always
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - /bin/sh
+                - '-c'
+                - >-
+                  for f in $(find /opt/app-root/src -regex '.*main.*\.js'); do
+                  envsubst "$(printenv | grep ENV | cut -d'=' -f1 | awk
+                  '{print "$" $0}' | paste -sd " ")" < $f > $f.tmp; cp $f.tmp
+                  $f ;done
+        name: toggler-web
+        ports:
+          - containerPort: 8080
+            protocol: TCP
+        resources: { }
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+          - mountPath: /etc/opt/rh/rh-nginx112/nginx/
+            name: nginx-config
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: { }
+      terminationGraceperiodSeconds: 10
+      volumes:
+        - name: nginx-config
+          configMap:
+            defaultMode: 420
+            name: toggler-web-nginx-config
+  test: false
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: toggler-redis-datasource
+    app.kubernetes.io/name: toggler-redis-datasource
+    app.kubernetes.io/part-of: toggler
+  name: toggler-redis-datasource
+spec:
+  replicas: 1
+  selector:
+    app: toggler-redis-datasource
+  template:
+    metadata:
+      labels:
+        app: toggler-redis-datasource
+    spec:
+      containers:
+        - name: toggler-redis-datasource
+          image: redis
+          command:
+            - redis-server
+            - "/redis-master/redis.conf"
+          env:
+            - name: MASTER
+              value: "true"
+          ports:
+            - containerPort: 6379
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 1000m
+              memory: 1Gi
+          volumeMounts:
+            - mountPath: /redis-master-data
+              name: data
+            - mountPath: /redis-master
+              name: config
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: toggler-redis-datasource-volume-claim
+        - name: config
+          configMap:
+            name: toggler-redis-datasource-config
+            items:
+              - key: redis-config
+                path: redis.conf
+            defaultMode: 420
