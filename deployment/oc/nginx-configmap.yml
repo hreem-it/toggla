@@ -1,0 +1,76 @@
+apiVersion: v1
+data:
+  nginx.conf: "# For more information on configuration, see:\r\n#   * Official English
+    Documentation: http://nginx.org/en/docs/\r\n#   * Official Russian Documentation:
+    http://nginx.org/ru/docs/\r\n\r\n\r\nworker_processes auto;\r\nerror_log /var/opt/rh/rh-nginx112/log/nginx/error.log;\r\npid
+    /var/opt/rh/rh-nginx112/run/nginx/nginx.pid;\r\n\r\n# Load dynamic modules. See
+    /opt/rh/rh-nginx112/root/usr/share/doc/README.dynamic.\r\ninclude /opt/rh/rh-nginx112/root/usr/share/nginx/modules/*.conf;\r\n\r\nevents
+    {\r\n    worker_connections  1024;\r\n}\r\n\r\nhttp {\r\n    log_format  main
+    \ '$remote_addr - $remote_user [$time_local] \"$request\" '\r\n                      '$status
+    $body_bytes_sent \"$http_referer\" '\r\n                      '\"$http_user_agent\"
+    \"$http_x_forwarded_for\"';\r\n    \r\n    include     /opt/rh/rh-nginx112/register.content/etc/opt/rh/rh-nginx112/nginx/mime.types;\r\n
+    \   \r\n    access_log  /var/opt/rh/rh-nginx112/log/nginx/access.log  main;\r\n\r\n
+    \   sendfile        on;\r\n    tcp_nopush      on;\r\n    tcp_nodelay     on;\r\n
+    \   keepalive_timeout  65;\r\n    types_hash_max_size 2048;\r\n    charset utf-8;\r\n\r\n
+    \   default_type  application/octet-stream;\r\n\r\n    # Load modular configuration
+    files from the /etc/nginx/conf.d directory.\r\n    # See http://nginx.org/en/docs/ngx_core_module.html#include\r\n
+    \   # for more information.\r\n    include /opt/app-root/etc/nginx.d/*.conf;\r\n\r\n\r\n
+    \   map $http_origin $cors_header {\r\n        default \"\";\r\n        \"~^(http://localhost:4200|http://localhost:5000|https://dev1\\.apps-test\\.sebank\\.se|https://stage\\.apps-test\\.sebank\\.se|https://apps\\.seb\\.se)$\"
+    \"$http_origin\";\r\n    }\r\n\r\n    server {\r\n        listen       8080 default_server;\r\n
+    \       # listen       [::]:8080 default_server;\r\n        server_name  _;\r\n
+    \       root         /opt/app-root/src;\r\n\r\n        # Compression config\r\n
+    \       gzip on;\r\n        gzip_disable \"msie6\";\r\n        gzip_vary on;\r\n
+    \       gzip_proxied any;\r\n        gzip_comp_level 6;\r\n        gzip_buffers
+    16 8k;\r\n        gzip_http_version 1.1;\r\n        gzip_min_length 256;\r\n        gzip_types
+    text/plain text/css application/json application/javascript application/x-javascript
+    text/xml application/xml application/xml+rss text/javascript application/vnd.ms-fontobject
+    application/x-font-ttf font/opentype image/svg+xml image/x-icon;\r\n\r\n        #
+    Load configuration files for the default server block.\r\n        include      /opt/app-root/etc/nginx.default.d/*.conf;\r\n
+    \       \r\n        # Load index.html as location to handle routes managed by
+    react-router\r\n        location / {\r\n            try_files $uri /index.html;\r\n
+    \           \r\n            if ($request_method = 'OPTIONS') {\r\n                add_header
+    'Access-Control-Allow-Origin' '*';\r\n                #\r\n                # Om
+    nom nom cookies\r\n                #\r\n                add_header 'Access-Control-Allow-Credentials'
+    'true';\r\n                add_header 'Access-Control-Allow-Methods' 'GET, POST,
+    OPTIONS';\r\n                #\r\n                # Custom headers and headers
+    various browsers *should* be OK with but aren't\r\n                #\r\n                add_header
+    'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';\r\n
+    \               #\r\n                # Tell client that this pre-flight info is
+    valid for 20 days\r\n                #\r\n                add_header 'Access-Control-Max-Age'
+    1728000;\r\n                add_header 'Content-Type' 'text/plain charset=UTF-8';\r\n
+    \               add_header 'Content-Length' 0;\r\n                return 204;\r\n
+    \            }\r\n             if ($request_method = 'POST') {\r\n                add_header
+    'Access-Control-Allow-Origin' '*';\r\n                add_header 'Access-Control-Allow-Credentials'
+    'true';\r\n                add_header 'Access-Control-Allow-Methods' 'GET, POST,
+    OPTIONS';\r\n                add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';\r\n
+    \            }\r\n             if ($request_method = 'GET') {\r\n                add_header
+    'Access-Control-Allow-Origin' '*';\r\n                add_header 'Access-Control-Allow-Credentials'
+    'true';\r\n                add_header 'Access-Control-Allow-Methods' 'GET, POST,
+    OPTIONS';\r\n                add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';\r\n
+    \            }\r\n        }\r\n        \r\n\r\n        error_page 404 /index.html;\r\n
+    \       location = /40x.html {\r\n        }\r\n\r\n        error_page 500 502
+    503 504  /50x.html;\r\n        location = /50x.html {\r\n        }\r\n\r\n        #
+    proxy the PHP scripts to Apache listening on 127.0.0.1:8080\r\n        #\r\n        #location
+    ~ \\.php$ {\r\n        #    proxy_pass   http://127.0.0.1;\r\n        #}\r\n\r\n
+    \       # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000\r\n
+    \       #\r\n        #location ~ \\.php$ {\r\n        #    root           html;\r\n
+    \       #    fastcgi_pass   127.0.0.1:9000;\r\n        #    fastcgi_index  index.php;\r\n
+    \       #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;\r\n
+    \       #    include        fastcgi_params;\r\n        #}\r\n\r\n        # deny
+    access to .htaccess files, if Apache's document root\r\n        # concurs with
+    nginx's one\r\n        #\r\n        #location ~ /\\.ht {\r\n        #    deny
+    \ all;\r\n        #}\r\n    }\r\n\r\n\r\n    # another virtual host using mix
+    of IP-, name-, and port-based configuration\r\n    #\r\n    #server {\r\n    #
+    \   listen       808000;\r\n    #    listen       somename:808080;\r\n    #    server_name
+    \ somename  alias  another.alias;\r\n\r\n    #    location / {\r\n    #        root
+    \  html;\r\n    #        index  index.html index.htm;\r\n    #    }\r\n    #}\r\n\r\n\r\n
+    \   # HTTPS server\r\n    #\r\n    #server {\r\n    #    listen       443;\r\n
+    \   #    server_name  localhost;\r\n\r\n    #    ssl                  on;\r\n
+    \   #    ssl_certificate      cert.pem;\r\n    #    ssl_certificate_key  cert.key;\r\n\r\n
+    \   #    ssl_session_timeout  5m;\r\n\r\n    #    ssl_protocols  SSLv2 SSLv3 TLSv1;\r\n
+    \   #    ssl_ciphers  HIGH:!aNULL:!MD5;\r\n    #    ssl_prefer_server_ciphers
+    \  on;\r\n\r\n    #    location / {\r\n    #        root   html;\r\n    #        index
+    \ index.html index.htm;\r\n    #    }\r\n    #}\r\n\r\n}"
+kind: ConfigMap
+metadata:
+  name: toggler-web-nginx-config
