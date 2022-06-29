@@ -67,15 +67,13 @@ spec:
     type: Rolling
   template:
     metadata:
-      annotations:
-        openshift.io/generated-by: OpenShiftNewApp
       creationTimestamp: null
       labels:
         app: toggler-web
         deploymentconfig: toggler-web
     spec:
       containers:
-        image: default/toggler-web:latest
+      - image: default/toggler-web:latest
         imagePullPolicy: Always
         lifecycle:
           postStart:
