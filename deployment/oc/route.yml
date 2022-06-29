@@ -1,9 +1,8 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  annotations:
-    openshift.io/host.generated: "true"
   labels:
+    app.kubernetes.io/part-of: toggler
     app: toggler-web
   name: toggler-web
 spec:
@@ -22,9 +21,8 @@ spec:
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  annotations:
-    openshift.io/host.generated: "true"
   labels:
+    app.kubernetes.io/part-of: toggler
     app: toggler-service
   name: toggler-service
 spec:
