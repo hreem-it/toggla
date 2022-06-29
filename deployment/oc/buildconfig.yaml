@@ -1,9 +1,8 @@
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
-  annotations:
-    openshift.io/generated-by: OpenShiftNewBuild
   labels:
+    app.kubernetes.io/part-of: toggler
     build: toggler-service
   name: toggler-service
 spec:
@@ -30,9 +29,8 @@ spec:
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
-  annotations:
-    openshift.io/generated-by: OpenShiftNewBuild
   labels:
+    app.kubernetes.io/part-of: toggler
     build: toggler-web
   name: toggler-web
 spec:
