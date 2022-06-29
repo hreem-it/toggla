@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: toggler-service
+  name: toggler-service
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: toggler-service
+    deploymentconfig: toggler-service
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  labels:
+    app: toggler-web
+  name: toggler-web
+spec:
+  ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: toggler-web
+    deploymentconfig: toggler-web
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: toggler-redis-datasource
+  labels:
+    app: toggler-redis-datasource
+spec:
+  type: ClusterIP
+  selector:
+    app: toggler-redis-datasource
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
