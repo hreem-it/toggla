@@ -74,3 +74,5 @@ data:
 kind: ConfigMap
 metadata:
   name: toggler-web-nginx-config
+  labels:
+    app.kubernetes.io/part-of: toggler
