@@ -1,33 +1,32 @@
 import { KeyIcon } from "@heroicons/react/outline";
 import { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { createToggle, createToggleToggle } from "../../../core/api/api";
+import { Link } from "react-router-dom";
+import { createProjectKey } from "../../../core/api/api";
 import Alert from "../../../core/components/Alert";
 import ButtonLoadingSpinner from "../../../core/components/ButtonLoadingSpinner";
-import EnvironmentChip from "../../../core/components/EnvironmentChip";
+import PopupModal from "../../../core/components/PopupModal";
 import ProjectContext from "../../../ProjectContext";
 import EnvironmentSelector from "./EnvironmentSelector";
 
 export default function CreateKeyForm() {
-  const navigate = useNavigate();
-  const { apiKey, selectedProject } = useContext(ProjectContext);
-  const [toggleKey, setToggleKey] = useState("");
-  const [toggleDescription, setToggleDescription] = useState("");
+  const { selectedProject } = useContext(ProjectContext);
+  const [keyDescription, setKeyDescription] = useState("");
+  const [environment, setEnvironment] = useState(undefined);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(undefined);
+  const [createdApiKey, setCreatedApiKey] = useState(undefined);
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (_) => {
     setLoading(true);
     setError(undefined);
     try {
-      await createToggle(apiKey, {
-        key: toggleKey,
-        description: toggleDescription,
-        enabled: false,
+      const newKey = await createProjectKey(selectedProject.projectKey, {
+        description: keyDescription,
+        env: environment.key,
       });
-      navigate(`/projects/${selectedProject.projectKey}/toggles`, {
-        replace: true,
-      });
+      setCreatedApiKey(newKey);
+      setSuccess(true);
     } catch (e) {
       setError(e.message);
     }
@@ -36,6 +35,15 @@ export default function CreateKeyForm() {
 
   return (
     <>
+      <PopupModal
+        heading={`New API Key created for ${selectedProject.projectKey}!`}
+        description="Please copy the API Key, and click to return to the projects section."
+        apiKey={createdApiKey}
+        navigateTo="/projects"
+        buttonText={"I have securely stored my API Key!"}
+        setSuccess={setSuccess}
+        success={success}
+      />
       <form className="space-y-8 divide-y divide-gray-200">
         <div className="space-y-8 divide-y divide-gray-200">
           <div className="pt-6">
@@ -54,7 +62,10 @@ export default function CreateKeyForm() {
                   Environment
                 </label>
                 <div className="mt-1 mb-5">
-                  <EnvironmentSelector />
+                  <EnvironmentSelector
+                    selected={environment}
+                    setSelected={setEnvironment}
+                  />
                 </div>
                 <label
                   htmlFor="about"
@@ -67,8 +78,8 @@ export default function CreateKeyForm() {
                     id="about"
                     name="about"
                     rows={3}
-                    placeholder="For fetching toggles via DEV services..."
-                    onChange={(e) => setToggleDescription(e.target.value)}
+                    placeholder="For fetching keys via DEV services..."
+                    onChange={(e) => setKeyDescription(e.target.value)}
                     className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md"
                     defaultValue={""}
                   />
@@ -84,7 +95,7 @@ export default function CreateKeyForm() {
 
         <div className="pt-5">
           <div className="flex justify-end">
-            <Link to={`/projects/${selectedProject.projectKey}/toggles`}>
+            <Link to={`/projects/${selectedProject.projectKey}/keys`}>
               <button
                 type="button"
                 className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

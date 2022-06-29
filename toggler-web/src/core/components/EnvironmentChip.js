@@ -13,7 +13,7 @@ const EnvironmentChip = ({ envOverride }) => {
     <p
       className={classNames(
         env === "DEV" && "text-green-800 bg-green-100",
-        env === "STAGE" && "text-yellow-800 bg-yellow-100",
+        env === "TEST" && "text-yellow-800 bg-yellow-100",
         env === "CANARY" && "text-orange-800 bg-orange-100",
         env === "PROD" && "text-red-800 bg-red-100",
         "px-2 inline-flex text-xs leading-5 font-semibold rounded-full "

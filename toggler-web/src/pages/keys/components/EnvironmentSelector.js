@@ -11,7 +11,7 @@ const settings = [
       "This logical project grouping would allow you to create and manage feature-toggles for your development environment and see Reports.",
   },
   {
-    key: "STAGE",
+    key: "TEST",
     name: "Staging",
     description:
       "This logical project grouping would allow you to create and manage feature-toggles for your staging environment and see Reports.",
@@ -34,8 +34,8 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function EnvironmentSelector() {
-  const [selected, setSelected] = useState(settings[1]);
+export default function EnvironmentSelector({ selected, setSelected }) {
+  if (!selected) setSelected(settings[1]);
   const { selectedProject } = useContext(ProjectContext);
   const environments = selectedProject?.apiKeys.map((apiKey) => apiKey.env);
 
