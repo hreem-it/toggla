@@ -2,6 +2,8 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: toggler-redis-datasource-config
+  labels:
+    app.kubernetes.io/part-of: toggler
 data:
   redis-config: |
     maxmemory 2mb
