@@ -34,7 +34,7 @@ create-artifacts-for-release:
 
 release:
 	cd toggler-web \
-	&& gh release create web-v1.0.0 -t "Toggler Web (1.0.0)" './toggler-web.zip#Toggler Web Artifact - 1.0.0 (ZIP)'
+	&& gh release create web-v1.0.1 -t "Toggler Web (1.0.1)" './toggler-web.zip#Toggler Web Artifact - 1.0.1 (ZIP)'
 
 	cd toggler-service/target \
-	&& gh release create service-v1.0.0 -t "Toggler Service (1.0.0)" './toggler-service.zip#Toggler Service Artifact - 1.0.0 (ZIP)'
+	&& gh release create service-v1.0.1 -t "Toggler Service (1.0.1)" './toggler-service.zip#Toggler Service Artifact - 1.0.1 (ZIP)'
