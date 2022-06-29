@@ -1,9 +1,12 @@
 export const createProject = async (payload) => {
-  await fetch(`${process.env.REACT_APP_BE_API_URL}/projects`, {
+  const response = await fetch(`${process.env.REACT_APP_BE_API_URL}/projects`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
+
+  if (response.status === 400)
+    throw new Error("Project with this project name already exists!");
 };
 
 export const createProjectKey = async (projectKey, payload) => {
@@ -20,7 +23,7 @@ export const createProjectKey = async (projectKey, payload) => {
 };
 
 export const createToggle = async (apiSecret, payload) => {
-  await fetch(`${process.env.REACT_APP_BE_API_URL}/toggles/`, {
+  const response = await fetch(`${process.env.REACT_APP_BE_API_URL}/toggles/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -28,6 +31,9 @@ export const createToggle = async (apiSecret, payload) => {
     },
     body: JSON.stringify(payload),
   });
+
+  if (response.status === 400)
+    throw new Error("Toggle with this key already exists");
 };
 
 export const createToggleVariation = async (apiSecret, toggleKey, payload) => {

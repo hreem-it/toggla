@@ -6,8 +6,13 @@ import EnvironmentChip from "../../../core/components/EnvironmentChip";
 import ProjectContext from "../../../ProjectContext";
 
 export default function CreateVariationForm({ setOpen }) {
-  const { selectedToggle, apiKey, addFetchedToggles, selectToggle } =
-    useContext(ProjectContext);
+  const {
+    selectedToggle,
+    apiKey,
+    addFetchedToggles,
+    selectToggle,
+    environment,
+  } = useContext(ProjectContext);
   const [variationKey, setVariationKey] = useState("");
   const [variationDescription, setVariationDescription] = useState("");
   const [loading, setLoading] = useState(false);
@@ -41,7 +46,7 @@ export default function CreateVariationForm({ setOpen }) {
               <h3 className="text-lg leading-6 font-medium text-gray-900">
                 Create a new Variation for {selectedToggle.key}
                 {"  "}
-                <EnvironmentChip envOverride={"DEV"} />
+                <EnvironmentChip envOverride={environment} />
               </h3>
             </div>
 

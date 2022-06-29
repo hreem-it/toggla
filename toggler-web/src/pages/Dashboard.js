@@ -2,7 +2,6 @@ import { Fragment, useContext, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   BellIcon,
-  ChartBarIcon,
   DocumentIcon,
   FolderIcon,
   KeyIcon,
@@ -129,11 +128,13 @@ export default function Example() {
                     </div>
                   </Transition.Child>
                   <div className="flex-shrink-0 px-4 py-2 flex items-center">
-                    <img
-                      className="h-11 pl-3 w-auto"
-                      src="/toggler-logo-transparent.png"
-                      alt="Workflow"
-                    />
+                    <Link to="/">
+                      <img
+                        className="h-11 pl-3 w-auto"
+                        src="/toggler-logo-transparent.png"
+                        alt="Workflow"
+                      />
+                    </Link>
                   </div>
                   <div className="mt-5 flex-1 h-0 overflow-y-auto">
                     <nav className="px-2 space-y-1">
@@ -176,11 +177,13 @@ export default function Example() {
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="border-r border-gray-200 pt-5 flex flex-col flex-grow bg-white overflow-y-auto">
             <div className="flex-shrink-0 px-4 py-2 flex items-center">
-              <img
-                className="h-11 pl-3 w-auto"
-                src="/toggler-logo-transparent.png"
-                alt="Workflow"
-              />
+              <Link to="/">
+                <img
+                  className="h-11 pl-3 w-auto"
+                  src="/toggler-logo-transparent.png"
+                  alt="Workflow"
+                />
+              </Link>
             </div>
             <div className="flex-grow mt-5 flex flex-col">
               <nav className="flex-1 px-2 pb-4 space-y-1">

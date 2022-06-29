@@ -12,7 +12,7 @@ const settings = [
   },
   {
     key: "TEST",
-    name: "Staging",
+    name: "Test",
     description:
       "This logical project grouping would allow you to create and manage feature-toggles for your staging environment and see Reports.",
   },

@@ -103,7 +103,7 @@ export default function PopupModal({
                       name="api-secret"
                       id="api-secret"
                       autoComplete="api-secret"
-                      value={apiKey}
+                      value={apiKey.replace(/['"]+/g, '')}
                       placeholder="00000000-0000-0000-0000-000000000000"
                       className="flex-1 text-center focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
                       disabled

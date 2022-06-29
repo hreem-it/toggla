@@ -14,6 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -27,7 +28,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import io.hreem.toggler.toggle.model.dto.AddToggleVariationRequest;
 import io.hreem.toggler.toggle.model.dto.NewToggleRequest;
-import io.smallrye.mutiny.Uni;
 
 @Path("toggles")
 @RequestScoped
@@ -39,6 +39,9 @@ public class Resource {
     @Context
     UriInfo uriInfo;
 
+    @Context
+    HttpHeaders headers;
+
     @Inject
     Logger log;
 
@@ -47,17 +50,17 @@ public class Resource {
 
     @GET
     @Operation(summary = "Get all toggles for a project key")
-    public Response getToggles(@HeaderParam("project-key") String projectKey) {
-        final var response = toggleService.getAllToggles(projectKey);
+    public Response getToggles() {
+        final var response = toggleService.getAllToggles();
         return Response.ok(response).build();
     }
 
     @GET
     @Path("/{key}")
     @Operation(summary = "Get detailed information about a toggle")
-    public Response getToggleData(@HeaderParam("project-key") String projectKey, @PathParam("key") String key)
+    public Response getToggleData(@PathParam("key") String key)
             throws JsonMappingException, JsonProcessingException {
-        final var response = toggleService.getToggle(projectKey, key);
+        final var response = toggleService.getToggle(key);
         if (response == null)
             throw new NotFoundException();
 
@@ -67,47 +70,47 @@ public class Resource {
     @GET
     @Path("/{key}/status")
     @Operation(summary = "Recommended: Get the status of a toggle")
-    public Boolean getToggleStatus(@HeaderParam("project-key") String projectKey,
+    public Boolean getToggleStatus(
             @PathParam("key") String key)
             throws JsonMappingException, JsonProcessingException {
-        return getToggleStatusForVariation(projectKey, key, "default");
+        return getToggleStatusForVariation(key, "default");
     }
 
     @GET
     @Path("/{key}/{variationKey}/status")
     @Operation(summary = "Recommended: Get the status of a toggle and a variation")
-    public Boolean getToggleStatusForVariation(@HeaderParam("project-key") String projectKey,
+    public Boolean getToggleStatusForVariation(
             @PathParam("key") String key, @PathParam("variationKey") String variationKey)
             throws JsonMappingException, JsonProcessingException {
-        return toggleService.getToggleStatus(projectKey, key, variationKey);
+        return toggleService.getToggleStatus(key, variationKey);
     }
 
     @PUT
     @Path("/{key}")
     @Operation(summary = "Enable/Disable a toggle")
-    public Response toggle(@HeaderParam("project-key") String projectKey, @PathParam("key") String key,
+    public Response toggle(@PathParam("key") String key,
             @PathParam("variationKey") String variationKey)
             throws JsonMappingException, JsonProcessingException {
-        return toggleVariation(projectKey, key, "default");
+        return toggleVariation(key, "default");
     }
 
     @PUT
     @Path("/{key}/{variationKey}")
     @Operation(summary = "Enable/Disable a toggle and a variation")
-    public Response toggleVariation(@HeaderParam("project-key") String projectKey, @PathParam("key") String key,
+    public Response toggleVariation(@PathParam("key") String key,
             @PathParam("variationKey") String variationKey)
             throws JsonMappingException, JsonProcessingException {
         log.infof("Toggling feature-toggle with key %s and variation: %s", key, variationKey);
-        toggleService.toggle(projectKey, key, variationKey);
+        toggleService.toggle(key, variationKey);
         return Response.ok().build();
     }
 
     @POST
     @Operation(summary = "Create a new toggle for a project")
-    public Response createToggle(@HeaderParam("project-key") String projectKey, @Valid NewToggleRequest request)
+    public Response createToggle(@Valid NewToggleRequest request)
             throws JsonProcessingException {
         log.infof("Creating a new toggle with key %s", request.key());
-        toggleService.createNewToggle(request, projectKey);
+        toggleService.createNewToggle(request);
 
         final var uri = uriInfo.getAbsolutePathBuilder().path(request.key()).build();
         return Response.created(uri).build();
@@ -116,12 +119,12 @@ public class Resource {
     @POST
     @Path("/{key}")
     @Operation(summary = "Create a new toggle variation for a project")
-    public Response createToggleVariation(@HeaderParam("project-key") String projectKey, @PathParam("key") String key,
+    public Response createToggleVariation(@PathParam("key") String key,
             @Valid AddToggleVariationRequest request)
             throws JsonProcessingException {
         log.infof("Creating a new toggle variation for key: %s with variationkey: %s", key,
                 request.variationKey());
-        toggleService.addToggleVariation(request, projectKey, key);
+        toggleService.addToggleVariation(request, key);
 
         final var uri = uriInfo.getAbsolutePathBuilder().path(request.variationKey()).build();
         return Response.created(uri).build();
@@ -130,22 +133,22 @@ public class Resource {
     @DELETE
     @Path("/{key}")
     @Operation(summary = "Remove a new toggle for a project")
-    public Response removeToggle(@HeaderParam("project-key") String projectKey, @PathParam("key") String key)
+    public Response removeToggle(@PathParam("key") String key)
             throws JsonMappingException, JsonProcessingException {
         log.infof("Removing feature-toggle with key %s", key);
-        toggleService.removeToggle(projectKey, key);
+        toggleService.removeToggle(key);
         return Response.ok().build();
     }
 
     @DELETE
     @Path("/{key}/{variationKey}")
     @Operation(summary = "Remove a new toggle variation for a project")
-    public Response removeToggleVariation(@HeaderParam("project-key") String projectKey, @PathParam("key") String key,
+    public Response removeToggleVariation(@PathParam("key") String key,
             @PathParam("variationKey") String variationKey)
             throws JsonProcessingException {
         log.infof("Removing toggle variation for key: %s with variationkey: %s", key,
                 variationKey);
-        toggleService.removeToggleVariation(projectKey, key, variationKey);
+        toggleService.removeToggleVariation(key, variationKey);
 
         return Response.ok().build();
     }
