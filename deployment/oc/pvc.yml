@@ -2,6 +2,8 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: toggler-redis-datasource-volume-claim
+  labels:
+    app.kubernetes.io/part-of: toggler
 spec:
   storageClassName: vsan
   accessModes:
