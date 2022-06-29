@@ -28,6 +28,9 @@ public class AuthenticationInterceptor implements ContainerRequestFilter {
     @Inject
     Service projectService;
 
+    @Inject
+    RequestContext requestContext;
+
     @Override
     public void filter(ContainerRequestContext context) {
         final String path = info.getPath();
@@ -52,8 +55,9 @@ public class AuthenticationInterceptor implements ContainerRequestFilter {
                 .findFirst().get().env().toString();
 
         // Populate project key into request
-        context.getHeaders().add("environment", environment);
-        context.getHeaders().add("project-key", projectKey);
+        requestContext.setApiKey(secretHeader);
+        requestContext.setProjectKey(projectKey);
+        requestContext.setEnvironment(environment);
         LOG.infof("--> environment: %s", environment);
         LOG.infof("--> project-key: %s", projectKey);
     }

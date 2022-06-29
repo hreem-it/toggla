@@ -1,6 +1,5 @@
 package io.hreem.toggler.toggle;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -10,12 +9,11 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import io.hreem.toggler.common.RequestContext;
 import io.hreem.toggler.common.Util;
 import io.hreem.toggler.project.model.Environment;
 import io.hreem.toggler.toggle.model.Toggle;
@@ -37,8 +35,8 @@ public class Service {
     @Inject
     RedisClient redis;
 
-    @Context
-    HttpHeaders headers;
+    @Inject
+    RequestContext context;
 
     @Inject
     io.hreem.toggler.project.Service projectService;
@@ -59,8 +57,8 @@ public class Service {
     @CacheInvalidateAll(cacheName = "toggle-status")
     public void toggle(@CacheKey String key, @CacheKey String variationKey)
             throws JsonMappingException, JsonProcessingException {
-        final var projectKey = headers.getHeaderString("project-key");
-        final var environment = headers.getHeaderString("environment");
+        final var projectKey = context.getProjectKey();
+        final var environment = context.getEnvironment();
         final var variationKeyOrDefault = variationKey != null ? variationKey : "default";
 
         // Find toggle
@@ -106,13 +104,13 @@ public class Service {
     @CacheInvalidateAll(cacheName = "toggle-status")
     public void addToggleVariation(AddToggleVariationRequest request, @CacheKey String key)
             throws JsonMappingException, JsonProcessingException {
-        final var projectKey = headers.getHeaderString("project-key");
+        final var projectKey = context.getProjectKey();
 
         // Create new variation
         final var newVariation = Variation.builder()
                 .variationKey(request.variationKey())
                 .description(request.description())
-                .enabled(false)
+                .enabled(request.enabled())
                 .createdAt(new Date())
                 .updatedAt(new Date())
                 .build();
@@ -147,13 +145,13 @@ public class Service {
      * @throws JsonProcessingException If the feature-toggle or variation key is
      * @throws JsonMappingException    If the feature-toggle or variation key is
      */
-    // @CacheInvalidateAll(cacheName = "toggle")
-    // @CacheInvalidateAll(cacheName = "toggle-list")
-    // @CacheInvalidateAll(cacheName = "toggle-status")
+    @CacheInvalidateAll(cacheName = "toggle")
+    @CacheInvalidateAll(cacheName = "toggle-list")
+    @CacheInvalidateAll(cacheName = "toggle-status")
     public void removeToggleVariation(@CacheKey String key, @CacheKey String variationKey)
             throws JsonMappingException, JsonProcessingException {
-        final var projectKey = headers.getHeaderString("project-key");
-        final var environment = headers.getHeaderString("environment");
+        final var projectKey = context.getProjectKey();
+        final var environment = context.getEnvironment();
         // Find toggle
         final var toggle = getToggle(key);
         if (toggle == null)
@@ -183,12 +181,12 @@ public class Service {
      * @param projectKey the project key
      * @throws JsonProcessingException
      */
-    // @CacheInvalidateAll(cacheName = "toggle")
-    // @CacheInvalidateAll(cacheName = "toggle-list")
-    // @CacheInvalidateAll(cacheName = "toggle-status")
+    @CacheInvalidateAll(cacheName = "toggle")
+    @CacheInvalidateAll(cacheName = "toggle-list")
+    @CacheInvalidateAll(cacheName = "toggle-status")
     public void createNewToggle(NewToggleRequest request) throws JsonProcessingException {
         // Create a new toggle configuration
-        final var projectKey = headers.getHeaderString("project-key");
+        final var projectKey = context.getProjectKey();
         final var newToggle = Toggle.builder()
                 .key(request.key())
                 .description(request.description())
@@ -216,12 +214,12 @@ public class Service {
         }
     }
 
-    // @CacheInvalidateAll(cacheName = "toggle")
-    // @CacheInvalidateAll(cacheName = "toggle-list")
-    // @CacheInvalidateAll(cacheName = "toggle-status")
+    @CacheInvalidateAll(cacheName = "toggle")
+    @CacheInvalidateAll(cacheName = "toggle-list")
+    @CacheInvalidateAll(cacheName = "toggle-status")
     public void removeToggle(@CacheKey String key) {
         // Check that a toggle with the key exists
-        final var projectKey = headers.getHeaderString("project-key");
+        final var projectKey = context.getProjectKey();
         for (var env : Environment.values()) {
             final var id = util.constructKey(projectKey, env.toString(), key);
             Log.info(id);
@@ -234,7 +232,7 @@ public class Service {
     }
 
     public Toggle getToggle(String toggleKey) throws JsonMappingException, JsonProcessingException {
-        final var environment = headers.getHeaderString("environment");
+        final var environment = context.getEnvironment();
         return getToggle(toggleKey, environment);
     }
 
@@ -247,11 +245,11 @@ public class Service {
      * @throws JsonMappingException
      * @throws JsonProcessingException
      */
-    //// @CacheResult(cacheName = "toggle")
+    // @CacheResult(cacheName = "toggle")
     public Toggle getToggle(@CacheKey String toggleKey, @CacheKey String environment)
             throws JsonMappingException, JsonProcessingException {
         // Get the toggle configuration from Redis
-        final var projectKey = headers.getHeaderString("project-key");
+        final var projectKey = context.getProjectKey();
         final var id = util.constructKey(projectKey, environment, toggleKey);
         Log.info(id);
         final var getResponse = redis.get(id);
@@ -268,10 +266,10 @@ public class Service {
      * @param projectKey The project key to get toggles for.
      * @return List of toggles.
      */
-    // @CacheResult(cacheName = "toggle-list")
+    @CacheResult(cacheName = "toggle-list")
     public List<Toggle> getAllToggles() {
-        final var projectKey = headers.getHeaderString("project-key");
-        final var environment = headers.getHeaderString("environment");
+        final var projectKey = context.getProjectKey();
+        final var environment = context.getEnvironment();
         final var id = util.constructKey(projectKey, environment, "*");
         Log.info(id);
         final var getAllResponse = redis.keys(id);
@@ -293,12 +291,12 @@ public class Service {
      * @param variationKey The variation key to get status for.
      * @return Uni of Boolean, resolves non-blockingly.
      */
-    // @CacheResult(cacheName = "toggle-status")
+    @CacheResult(cacheName = "toggle-status")
     public Boolean getToggleStatus(@CacheKey String key,
             @CacheKey String variationKey) {
         final var variationKeyOrDefault = variationKey != null ? variationKey : "default";
-        final var projectKey = headers.getHeaderString("project-key");
-        final var environment = headers.getHeaderString("environment");
+        final var projectKey = context.getProjectKey();
+        final var environment = context.getEnvironment();
         final var id = util.constructKey(projectKey, environment, key);
         Log.info(id);
         final var response = redis.get(id);
