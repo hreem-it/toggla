@@ -9,9 +9,6 @@ import javax.enterprise.context.ApplicationScoped;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.hreem.toggler.project.model.Environment;
-import io.hreem.toggler.toggle.model.Toggle;
-
 @ApplicationScoped
 public class Util {
 
@@ -31,6 +28,10 @@ public class Util {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String constructKey(String... keyParts) {
+        return String.join(":", keyParts);
     }
 
     public <T> void replaceIf(List<T> list, Predicate<? super T> pred, UnaryOperator<T> op) {

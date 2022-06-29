@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { createToggle, createToggleToggle } from "../../../core/api/api";
+import { createToggle } from "../../../core/api/api";
 import Alert from "../../../core/components/Alert";
 import ButtonLoadingSpinner from "../../../core/components/ButtonLoadingSpinner";
 import EnvironmentChip from "../../../core/components/EnvironmentChip";

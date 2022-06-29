@@ -52,7 +52,9 @@ public class AuthenticationInterceptor implements ContainerRequestFilter {
                 .findFirst().get().env().toString();
 
         // Populate project key into request
-        context.getHeaders().add("project-key", projectKey + ":" + environment);
+        context.getHeaders().add("environment", environment);
+        context.getHeaders().add("project-key", projectKey);
+        LOG.infof("--> environment: %s", environment);
         LOG.infof("--> project-key: %s", projectKey);
     }
 }

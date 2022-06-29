@@ -40,7 +40,7 @@ public class Service {
      */
     public void createProject(@Valid CreateProjectRequest request) {
         // Check if project with key already exists
-        if (redis.exists(List.of(request.projectKey())).toBoolean()) {
+        if (redis.exists(List.of("project:" + request.projectKey())).toBoolean()) {
             throw new BadRequestException("Project with key " + request.projectKey() + " already exists");
         }
 

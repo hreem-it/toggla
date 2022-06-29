@@ -39,12 +39,11 @@ public class ToggleServiceTest {
     @Test
     public void toggle_should_fail_if_no_toggle_exists_with_the_key_or_variation_key() throws JsonProcessingException {
         // Given
-        final var mockProjectKey = "mock-project-key";
         final var mockToggleKey = "mock-toggle-key";
         final var mockVariationKey = "mock-variation-key";
 
         // When + Then
-        assertThatThrownBy(() -> toggleService.toggle(mockProjectKey, mockToggleKey, mockVariationKey))
+        assertThatThrownBy(() -> toggleService.toggle(mockToggleKey, mockVariationKey))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage("Toggle with key " + mockToggleKey + " does not exist");
 
@@ -56,10 +55,10 @@ public class ToggleServiceTest {
                 .description("mock-description")
                 .enabled(true)
                 .build();
-        toggleService.createNewToggle(mockToggle, mockProjectKey);
+        toggleService.createNewToggle(mockToggle);
 
         // When + Then
-        assertThatThrownBy(() -> toggleService.toggle(mockProjectKey, mockToggleKey, mockVariationKey))
+        assertThatThrownBy(() -> toggleService.toggle(mockToggleKey, mockVariationKey))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(
                         "Toggle with key " + mockToggleKey + " and variation " + mockVariationKey + " does not exist");
@@ -68,22 +67,21 @@ public class ToggleServiceTest {
     @Test
     public void toggle_should_toggle_default_variation() throws JsonProcessingException {
         // Given
-        final var mockProjectKey = "mock-project-key";
         final var mockToggleKey = "mock-toggle-key";
         final var mockToggle = NewToggleRequest.builder()
                 .key(mockToggleKey)
                 .description("mock-description")
                 .enabled(false)
                 .build();
-        toggleService.createNewToggle(mockToggle, mockProjectKey);
+        toggleService.createNewToggle(mockToggle);
 
         // When 1
-        toggleService.toggle(mockProjectKey, mockToggleKey, null);
-        final var toggle = toggleService.getToggle(mockProjectKey, mockToggleKey);
+        toggleService.toggle(mockToggleKey, null);
+        final var toggle = toggleService.getToggle(mockToggleKey);
 
         // When 2
-        toggleService.toggle(mockProjectKey, mockToggleKey, "default"); // This time we pass in a variation key.
-        final var toggle2 = toggleService.getToggle(mockProjectKey, mockToggleKey);
+        toggleService.toggle(mockToggleKey, "default"); // This time we pass in a variation key.
+        final var toggle2 = toggleService.getToggle(mockToggleKey);
 
         // Then 1
         assertThat(toggle).isNotNull();
@@ -102,7 +100,6 @@ public class ToggleServiceTest {
     public void addToggleVariation_should_create_if_new_and_fail_if_toggle_variation_already_exists()
             throws JsonProcessingException {
         // Given
-        final var mockProjectKey = "mock-project-key";
         final var mockToggleKey = "mock-toggle-key";
         final var mockVariationKey = "mock-toggle-variation-key";
         final var mockToggle = NewToggleRequest.builder()
@@ -110,7 +107,7 @@ public class ToggleServiceTest {
                 .description("mock-description")
                 .enabled(false)
                 .build();
-        toggleService.createNewToggle(mockToggle, mockProjectKey);
+        toggleService.createNewToggle(mockToggle);
 
         final var variationRequest = AddToggleVariationRequest.builder()
                 .variationKey(mockVariationKey)
@@ -118,8 +115,8 @@ public class ToggleServiceTest {
                 .build();
 
         // When 1
-        toggleService.addToggleVariation(variationRequest, mockProjectKey, mockToggleKey);
-        final var toggle = toggleService.getToggle(mockProjectKey, mockToggleKey);
+        toggleService.addToggleVariation(variationRequest, mockToggleKey);
+        final var toggle = toggleService.getToggle(mockToggleKey);
 
         // Then 1
         assertThat(toggle).isNotNull();
@@ -131,7 +128,7 @@ public class ToggleServiceTest {
         assertThat(toggle.variations().get(1).enabled()).isTrue();
 
         // When 2 + Then 2
-        assertThatThrownBy(() -> toggleService.addToggleVariation(variationRequest, mockProjectKey, mockToggleKey))
+        assertThatThrownBy(() -> toggleService.addToggleVariation(variationRequest, mockToggleKey))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessageContaining("already exists");
     }
@@ -140,7 +137,6 @@ public class ToggleServiceTest {
     public void removeToggleVariation_should_remove_if_toggle_with_variation_exists_and_fail_if_not()
             throws JsonMappingException, JsonProcessingException {
         // Given
-        final var mockProjectKey = "mock-project-key";
         final var mockToggleKey = "mock-toggle-key";
         final var mockVariationKey = "mock-toggle-variation-key";
         final var mockToggle = NewToggleRequest.builder()
@@ -148,17 +144,17 @@ public class ToggleServiceTest {
                 .description("mock-description")
                 .enabled(false)
                 .build();
-        toggleService.createNewToggle(mockToggle, mockProjectKey);
+        toggleService.createNewToggle(mockToggle);
 
         final var variationRequest = AddToggleVariationRequest.builder()
                 .variationKey(mockVariationKey)
                 .enabled(true)
                 .build();
-        toggleService.addToggleVariation(variationRequest, mockProjectKey, mockToggleKey);
+        toggleService.addToggleVariation(variationRequest, mockToggleKey);
 
         // When 1
-        toggleService.removeToggleVariation(mockProjectKey, mockToggleKey, mockVariationKey);
-        final var toggle = toggleService.getToggle(mockProjectKey, mockToggleKey);
+        toggleService.removeToggleVariation(mockToggleKey, mockVariationKey);
+        final var toggle = toggleService.getToggle(mockToggleKey);
 
         // Then 1
         assertThat(toggle).isNotNull();
@@ -166,7 +162,7 @@ public class ToggleServiceTest {
         assertThat(toggle.variations().get(0).variationKey()).isEqualTo("default");
 
         // When + Then 2
-        assertThatThrownBy(() -> toggleService.removeToggleVariation(mockProjectKey, mockToggleKey, mockVariationKey))
+        assertThatThrownBy(() -> toggleService.removeToggleVariation(mockToggleKey, mockVariationKey))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("does not exist");
     }
@@ -174,16 +170,15 @@ public class ToggleServiceTest {
     @Test
     public void createNewToggle_should_fail_if_toggle_with_key_already_exists() throws JsonProcessingException {
         // Given
-        final var mockProjectKey = "mock-project-key";
         final var mockToggle = NewToggleRequest.builder()
                 .key("mock-key")
                 .description("mock-description")
                 .enabled(true)
                 .build();
-        toggleService.createNewToggle(mockToggle, mockProjectKey);
+        toggleService.createNewToggle(mockToggle);
 
         // When + Then
-        assertThatThrownBy(() -> toggleService.createNewToggle(mockToggle, mockProjectKey))
+        assertThatThrownBy(() -> toggleService.createNewToggle(mockToggle))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessageContaining("already exists");
     }
@@ -196,17 +191,16 @@ public class ToggleServiceTest {
     @Test
     public void getToggle_should_return_toggle_if_exists() throws JsonProcessingException {
         // Given
-        final var mockProjectKey = "mock-project-key";
         final var mockToggle = NewToggleRequest.builder()
                 .key("mock-key")
                 .description("mock-description")
                 .enabled(true)
                 .build();
 
-        toggleService.createNewToggle(mockToggle, mockProjectKey);
+        toggleService.createNewToggle(mockToggle);
 
         // When
-        final var response = toggleService.getToggle(mockProjectKey, mockToggle.key());
+        final var response = toggleService.getToggle(mockToggle.key());
 
         // Then
         assertThat(response).isNotNull();
@@ -218,11 +212,10 @@ public class ToggleServiceTest {
     @Test
     public void getToggle_should_return_null_if_non_existant() throws JsonProcessingException {
         // Given
-        final var mockProjectKey = "mock-project-key";
         final var mockToggleKey = "mock-key";
 
         // When
-        final var response = toggleService.getToggle(mockProjectKey, mockToggleKey);
+        final var response = toggleService.getToggle(mockToggleKey);
 
         // Then
         assertThat(response).isNull();
@@ -231,7 +224,6 @@ public class ToggleServiceTest {
     @Test
     public void getAllToggles_should_return_all_created_toggles() throws JsonProcessingException {
         // Given
-        final var mockProjectKey = "mock-project-key";
         final var mockToggle = NewToggleRequest.builder()
                 .key("mock-key")
                 .description("mock-description")
@@ -243,11 +235,11 @@ public class ToggleServiceTest {
                 .enabled(false)
                 .build();
 
-        toggleService.createNewToggle(mockToggle, mockProjectKey);
-        toggleService.createNewToggle(mockToggle2, mockProjectKey);
+        toggleService.createNewToggle(mockToggle);
+        toggleService.createNewToggle(mockToggle2);
 
         // When
-        final var response = toggleService.getAllToggles(mockProjectKey);
+        final var response = toggleService.getAllToggles();
 
         // Then
         assertThat(response).isNotNull();
@@ -265,10 +257,9 @@ public class ToggleServiceTest {
     @Test
     public void getAllToggles_should_return_empty_list_if_new_project() throws JsonProcessingException {
         // Given
-        final var mockProjectKey = "mock-project-key";
 
         // When
-        final var response = toggleService.getAllToggles(mockProjectKey);
+        final var response = toggleService.getAllToggles();
 
         // Then
         assertThat(response).isNotNull();
