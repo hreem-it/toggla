@@ -21,3 +21,10 @@ Feel free to clone the project and modify the Openshift resources to fit your cl
   
   oc get all --selector='app.kubernetes.io/part-of=toggler'
 ```
+
+### Deploying to AWS Lambda
+This template will use the power of GraalVM Native Image to create a serverless option which uses AWS DynamoDB as the DS layer, essentially allowing the service to run 100% serverless on top of existing cloud providers.
+
+```
+Soon to come!
+```
