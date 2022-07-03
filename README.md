@@ -1,4 +1,5 @@
-![alt text](https://github.com/Hreem-IT/toggler/blob/d0617b1ba78df940e87c6e9f7fd12588810ebe04/etc/toggler-logo-transparent.png?raw=true)
+<p align="center">
+  <img src="https://github.com/Hreem-IT/toggler/blob/d0617b1ba78df940e87c6e9f7fd12588810ebe04/etc/toggler-logo-transparent.png?raw=true" data-canonical-src="https://github.com/Hreem-IT/toggler/blob/d0617b1ba78df940e87c6e9f7fd12588810ebe04/etc/toggler-logo-transparent.png?raw=true" width="700" />  </p>
 
 # Toggler - An API driven feature toggling service [Open Source]
 
@@ -20,4 +21,11 @@ Feel free to clone the project and modify the Openshift resources to fit your cl
   oc start-build toggler-web --from-dir artifacts/build/ --follow
   
   oc get all --selector='app.kubernetes.io/part-of=toggler'
+```
+
+### Deploying to AWS Lambda
+This template will use the power of GraalVM Native Image to create a serverless option which uses AWS DynamoDB as the DS layer, essentially allowing the service to run 100% serverless on top of existing cloud providers.
+
+```
+Soon to come!
 ```
