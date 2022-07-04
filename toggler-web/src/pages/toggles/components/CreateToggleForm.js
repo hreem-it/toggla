@@ -8,7 +8,7 @@ import ProjectContext from "../../../ProjectContext";
 
 export default function CreateToggleForm() {
   const navigate = useNavigate();
-  const { apiKey, selectedProject } = useContext(ProjectContext);
+  const { apiKey, selectedProject, environment } = useContext(ProjectContext);
   const [toggleKey, setToggleKey] = useState("");
   const [toggleDescription, setToggleDescription] = useState("");
   const [loading, setLoading] = useState(false);
@@ -41,7 +41,7 @@ export default function CreateToggleForm() {
               <h3 className="text-lg leading-6 font-medium text-gray-900">
                 Create a new Feature Toggle
                 {"  "}
-                <EnvironmentChip envOverride={"DEV"} />
+                <EnvironmentChip envOverride={environment} />
               </h3>
             </div>
 

@@ -13,10 +13,13 @@ import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotFoundException;
 
 import io.hreem.toggler.common.Util;
+import io.hreem.toggler.common.repository.ObjectNotFoundException;
+import io.hreem.toggler.common.repository.Repository;
 import io.hreem.toggler.project.model.ApiKey;
 import io.hreem.toggler.project.model.Project;
 import io.hreem.toggler.project.model.dto.CreateApiKeyRequest;
 import io.hreem.toggler.project.model.dto.CreateProjectRequest;
+import io.hreem.toggler.project.repository.RepositoryProducer;
 import io.quarkus.redis.client.RedisClient;
 import io.quarkus.redis.client.reactive.ReactiveRedisClient;
 import io.smallrye.mutiny.Uni;
@@ -32,6 +35,12 @@ public class Service {
 
     @Inject
     Util util;
+
+    Repository<String, Project> repository;
+
+    public Service(RepositoryProducer repoProducer) {
+        this.repository = repoProducer.getRepository();
+    }
 
     /**
      * Creates a new project.
@@ -52,7 +61,7 @@ public class Service {
                 .updatedAt(new Date())
                 .apiKeys(List.of())
                 .build();
-        redis.set(List.of("project:" + request.projectKey(), util.convert(newProject)));
+        repository.create("project:" + request.projectKey(), newProject);
     }
 
     /**
@@ -63,33 +72,33 @@ public class Service {
      */
     public UUID createAPIKey(String projectKey, @Valid CreateApiKeyRequest request) {
         // Check if project with key exists
-        final var projectGetRequest = redis.get("project:" + projectKey);
-        if (projectGetRequest == null) {
+        try {
+            final var project = repository.get("project:" + projectKey);
+
+            // Check if API key with environment config already exists
+            final var apiKeyWithSameEnvironment = project.apiKeys().stream()
+                    .filter(key -> key.env().equals(request.env()))
+                    .findFirst();
+            if (apiKeyWithSameEnvironment.isPresent()) {
+                throw new ForbiddenException("API key with environment " + request.env() + " already exists");
+            }
+
+            // Create new project api key
+            final var newAPIKey = ApiKey.builder()
+                    .description(request.description())
+                    .apiKey(UUID.randomUUID())
+                    .createdAt(new Date())
+                    .updatedAt(new Date())
+                    .env(request.env())
+                    .build();
+            project.apiKeys().add(newAPIKey);
+            redis.set(List.of("project:" + projectKey, util.convert(project)));
+            redis.set(List.of("apiKey:" + newAPIKey.apiKey(), projectKey));
+
+            return newAPIKey.apiKey();
+        } catch (ObjectNotFoundException e) {
             throw new NotFoundException("Project with key " + projectKey + " does not exist");
         }
-        final var project = util.convert(projectGetRequest.toString(), Project.class);
-
-        // Check if API key with environment config already exists
-        final var apiKeyWithSameEnvironment = project.apiKeys().stream()
-                .filter(key -> key.env().equals(request.env()))
-                .findFirst();
-        if (apiKeyWithSameEnvironment.isPresent()) {
-            throw new ForbiddenException("API key with environment " + request.env() + " already exists");
-        }
-
-        // Create new project api key
-        final var newAPIKey = ApiKey.builder()
-                .description(request.description())
-                .apiKey(UUID.randomUUID())
-                .createdAt(new Date())
-                .updatedAt(new Date())
-                .env(request.env())
-                .build();
-        project.apiKeys().add(newAPIKey);
-        redis.set(List.of("project:" + projectKey, util.convert(project)));
-        redis.set(List.of("apiKey:" + newAPIKey.apiKey(), projectKey));
-
-        return newAPIKey.apiKey();
     }
 
     /**
@@ -99,11 +108,11 @@ public class Service {
      * @return The project key if the API key is valid.
      */
     public String getProjectKeyFromApiKey(String apiKey) {
-        final var projectKey = redis.get("apiKey:" + apiKey);
+        final var projectKey = repository.get("apiKey:" + apiKey);
         if (projectKey == null) {
             throw new ForbiddenException("API key " + apiKey + " does not exist");
         }
-        return projectKey.toString();
+        return projectKey;
     }
 
     /**
