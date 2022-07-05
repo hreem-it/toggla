@@ -13,8 +13,8 @@ import javax.ws.rs.NotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import io.hreem.toggler.common.RequestContext;
 import io.hreem.toggler.common.Util;
+import io.hreem.toggler.common.http.RequestContext;
 import io.hreem.toggler.common.repository.ObjectNotFoundException;
 import io.hreem.toggler.common.repository.Repository;
 import io.hreem.toggler.project.model.Environment;
@@ -23,20 +23,26 @@ import io.hreem.toggler.toggle.model.Variation;
 import io.hreem.toggler.toggle.model.dto.AddToggleVariationRequest;
 import io.hreem.toggler.toggle.model.dto.NewToggleRequest;
 import io.hreem.toggler.toggle.repository.RepositoryProducer;
+import io.quarkus.cache.Cache;
 import io.quarkus.cache.CacheInvalidateAll;
 import io.quarkus.cache.CacheKey;
+import io.quarkus.cache.CacheName;
 import io.quarkus.cache.CacheResult;
 import io.quarkus.logging.Log;
 
 @RequestScoped
 public class Service {
-    
+
     @Inject
     Util util;
-    
+
     @Inject
     RequestContext context;
-    
+
+    @Inject
+    @CacheName("toggle-list")
+    Cache cache;
+
     Repository<String, Toggle> repository;
 
     public Service(RepositoryProducer repoProducer) {
@@ -88,7 +94,7 @@ public class Service {
 
         // Save toggle
         final var id = util.constructKey(projectKey, environment, key);
-        Log.info(id);
+
         try {
             repository.update(id, toggle);
         } catch (ObjectNotFoundException e) {
@@ -137,7 +143,7 @@ public class Service {
             // Save toggle
             toggle.variations().add(newVariation);
             final var id = util.constructKey(projectKey, environment.toString(), key);
-            Log.info(id);
+
             repository.create(id, toggle);
         }
     }
@@ -173,7 +179,6 @@ public class Service {
 
         // Save toggle
         final var id = util.constructKey(projectKey, environment, key);
-        Log.info(id);
 
         try {
             repository.update(id, toggle);
@@ -213,7 +218,7 @@ public class Service {
         for (var env : Environment.values()) {
             // Check that no toggle with the same key already exists
             final var id = util.constructKey(projectKey, env.toString(), newToggle.key());
-            Log.info(id);
+
             if (repository.exists(id))
                 throw new BadRequestException("A toggle with the key " + newToggle.key() + " already exists");
 
@@ -230,7 +235,7 @@ public class Service {
         final var projectKey = context.getProjectKey();
         for (var env : Environment.values()) {
             final var id = util.constructKey(projectKey, env.toString(), key);
-            Log.info(id);
+
             try {
                 repository.delete(id);
             } catch (ObjectNotFoundException e) {
@@ -272,25 +277,26 @@ public class Service {
      * @param projectKey The project key to get toggles for.
      * @return List of toggles.
      */
-    @CacheResult(cacheName = "toggle-list")
     public List<Toggle> getAllToggles() {
         final var projectKey = context.getProjectKey();
         final var environment = context.getEnvironment();
         final var idPattern = util.constructKey(projectKey, environment, "*");
-        Log.info(idPattern);
-        final var keys = repository.getAllKeysMatching(idPattern);
-        final var toggles = keys.stream()
-                .parallel()
-                .map(t -> {
-                    try {
-                        return repository.get(t);
-                    } catch (ObjectNotFoundException e) {
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        return toggles;
+
+        return cache.get(idPattern, type -> {
+            final var keys = repository.getAllKeysMatching(idPattern);
+            final var toggles = keys.stream()
+                    .parallel()
+                    .map(t -> {
+                        try {
+                            return repository.get(t);
+                        } catch (ObjectNotFoundException e) {
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            return toggles;
+        }).await().indefinitely();
     }
 
     /***
@@ -307,7 +313,6 @@ public class Service {
         final var projectKey = context.getProjectKey();
         final var environment = context.getEnvironment();
         final var id = util.constructKey(projectKey, environment, key);
-        Log.info(id);
 
         try {
             final var toggle = repository.get(id);

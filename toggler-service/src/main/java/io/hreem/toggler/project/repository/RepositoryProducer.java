@@ -9,42 +9,51 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import io.hreem.toggler.common.repository.Repository;
 import io.hreem.toggler.project.model.Project;
+import io.hreem.toggler.common.repository.DBTypeQualifiers;
+import io.hreem.toggler.common.repository.DataTypeQualifiers;
 
 @ApplicationScoped
 public class RepositoryProducer {
-
-    static enum RepositoryTypes {
-        REDIS("redis"),
-        DDB("dynamodb");
-
-        private final String name;
-
-        RepositoryTypes(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public static RepositoryTypes fromString(String name) {
-            for (RepositoryTypes repositoryTypes : RepositoryTypes.values()) {
-                if (repositoryTypes.getName().equals(name)) {
-                    return repositoryTypes;
-                }
-            }
-            throw new IllegalArgumentException("No enum constant " + name);
-        }
-    }
 
     @Inject
     @ConfigProperty(name = "toggler.toggle.repository.type", defaultValue = "redis")
     String repositoryType;
 
     @Inject
-    Instance<Repository<String, Project>> repositoryInstance;
+    @DBTypeQualifiers.Redis
+    @DataTypeQualifiers.Project
+    Repository<String, Project> redisProjectRepository;
 
-    public Repository<String, Project> getRepository() {
-        return repositoryInstance.select(NamedLiteral.of(repositoryType)).get();
+    @Inject
+    @DBTypeQualifiers.DynamoDB
+    @DataTypeQualifiers.Project
+    Repository<String, Project> ddbProjectRepository;
+
+    @Inject
+    @DBTypeQualifiers.Redis
+    @DataTypeQualifiers.APIKey
+    Repository<String, String> redisKeyRepository;
+
+    @Inject
+    @DBTypeQualifiers.DynamoDB
+    @DataTypeQualifiers.APIKey
+    Repository<String, String> ddbKeyRepository;
+
+    public Repository<String, Project> getProjectRepository() {
+        return switch (repositoryType) {
+            case "redis" -> redisProjectRepository;
+            case "dynamodb" -> ddbProjectRepository;
+            default -> throw new IllegalArgumentException(
+                    "Invalid DB type specified, allowed types are 'redis' or 'dynamodb'");
+        };
+    }
+
+    public Repository<String, String> getKeyRepository() {
+        return switch (repositoryType) {
+            case "redis" -> redisKeyRepository;
+            case "dynamodb" -> ddbKeyRepository;
+            default -> throw new IllegalArgumentException(
+                    "Invalid DB type specified, allowed types are 'redis' or 'dynamodb'");
+        };
     }
 }

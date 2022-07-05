@@ -1,17 +1,18 @@
-package io.hreem.toggler.toggle.repository;
+package io.hreem.toggler.project.repository;
 
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Named;
 
 import io.hreem.toggler.common.repository.Repository;
 import io.hreem.toggler.project.model.Project;
+import io.hreem.toggler.common.repository.DBTypeQualifiers;
+import io.hreem.toggler.common.repository.DataTypeQualifiers;
 
-@Named("dynamodb")
 @ApplicationScoped
-public class DynamoDBRepository implements Repository<String, Project> {
+@DBTypeQualifiers.DynamoDB
+@DataTypeQualifiers.Project
+public class DynamoDBProjectRepository implements Repository<String, Project> {
 
     @Override
     public List<String> getAllKeysMatching(String pattern) {

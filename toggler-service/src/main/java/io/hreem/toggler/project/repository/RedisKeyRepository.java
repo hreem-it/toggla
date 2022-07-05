@@ -1,21 +1,21 @@
-package io.hreem.toggler.toggle.repository;
+package io.hreem.toggler.project.repository;
 
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import io.hreem.toggler.common.Util;
 import io.hreem.toggler.common.repository.ObjectNotFoundException;
 import io.hreem.toggler.common.repository.Repository;
-import io.hreem.toggler.project.model.Project;
 import io.quarkus.redis.client.RedisClient;
+import io.hreem.toggler.common.repository.DBTypeQualifiers;
+import io.hreem.toggler.common.repository.DataTypeQualifiers;
 
-@Named("redis")
 @ApplicationScoped
-public class RedisRepository implements Repository<String, Project> {
+@DBTypeQualifiers.Redis
+@DataTypeQualifiers.APIKey
+public class RedisKeyRepository implements Repository<String, String> {
 
     @Inject
     Util util;
@@ -32,13 +32,13 @@ public class RedisRepository implements Repository<String, Project> {
     }
 
     @Override
-    public void create(String id, Project data) {
-        redis.set(List.of(id, util.convert(data)));
+    public void create(String id, String data) {
+        redis.set(List.of(id, data));
     }
 
     @Override
-    public void update(String id, Project data) {
-        redis.set(List.of(id, util.convert(data)));
+    public void update(String id, String data) {
+        redis.set(List.of(id, data));
     }
 
     @Override
@@ -51,12 +51,12 @@ public class RedisRepository implements Repository<String, Project> {
     }
 
     @Override
-    public Project get(String id) throws ObjectNotFoundException {
+    public String get(String id) throws ObjectNotFoundException {
         final var result = redis.get(id);
         if (result == null) {
             throw new ObjectNotFoundException("Object with id " + id + " does not exist");
         }
-        return util.convert(result.toString(), Project.class);
+        return result.toString();
     }
 
     @Override

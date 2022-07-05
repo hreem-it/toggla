@@ -16,7 +16,7 @@ import org.mockito.Mockito;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import io.hreem.toggler.common.RequestContext;
+import io.hreem.toggler.common.http.RequestContext;
 import io.hreem.toggler.project.model.Environment;
 import io.hreem.toggler.toggle.model.Toggle;
 import io.hreem.toggler.toggle.model.Variation;

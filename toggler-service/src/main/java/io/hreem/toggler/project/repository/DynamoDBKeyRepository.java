@@ -1,18 +1,17 @@
-package io.hreem.toggler.toggle.repository;
+package io.hreem.toggler.project.repository;
 
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 
 import io.hreem.toggler.common.repository.Repository;
-import io.hreem.toggler.toggle.model.Toggle;
 import io.hreem.toggler.common.repository.DBTypeQualifiers;
 import io.hreem.toggler.common.repository.DataTypeQualifiers;
 
 @ApplicationScoped
 @DBTypeQualifiers.DynamoDB
-@DataTypeQualifiers.Toggle
-public class DynamoDBRepository implements Repository<String, Toggle> {
+@DataTypeQualifiers.APIKey
+public class DynamoDBKeyRepository implements Repository<String, String> {
 
     @Override
     public List<String> getAllKeysMatching(String pattern) {
@@ -21,13 +20,13 @@ public class DynamoDBRepository implements Repository<String, Toggle> {
     }
 
     @Override
-    public void create(String id, Toggle data) {
+    public void create(String id, String data) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void update(String id, Toggle data) {
+    public void update(String id, String data) {
         // TODO Auto-generated method stub
 
     }
@@ -39,7 +38,7 @@ public class DynamoDBRepository implements Repository<String, Toggle> {
     }
 
     @Override
-    public Toggle get(String id) {
+    public String get(String id) {
         // TODO Auto-generated method stub
         return null;
     }

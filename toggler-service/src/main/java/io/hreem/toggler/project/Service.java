@@ -22,7 +22,6 @@ import io.hreem.toggler.project.model.dto.CreateProjectRequest;
 import io.hreem.toggler.project.repository.RepositoryProducer;
 import io.quarkus.redis.client.RedisClient;
 import io.quarkus.redis.client.reactive.ReactiveRedisClient;
-import io.smallrye.mutiny.Uni;
 
 @ApplicationScoped
 public class Service {
@@ -36,10 +35,12 @@ public class Service {
     @Inject
     Util util;
 
-    Repository<String, Project> repository;
+    Repository<String, Project> projectRepository;
+    Repository<String, String> keyRepository;
 
     public Service(RepositoryProducer repoProducer) {
-        this.repository = repoProducer.getRepository();
+        this.projectRepository = repoProducer.getProjectRepository();
+        this.keyRepository = repoProducer.getKeyRepository();
     }
 
     /**
@@ -61,7 +62,7 @@ public class Service {
                 .updatedAt(new Date())
                 .apiKeys(List.of())
                 .build();
-        repository.create("project:" + request.projectKey(), newProject);
+        projectRepository.create("project:" + request.projectKey(), newProject);
     }
 
     /**
@@ -73,7 +74,7 @@ public class Service {
     public UUID createAPIKey(String projectKey, @Valid CreateApiKeyRequest request) {
         // Check if project with key exists
         try {
-            final var project = repository.get("project:" + projectKey);
+            final var project = projectRepository.get("project:" + projectKey);
 
             // Check if API key with environment config already exists
             final var apiKeyWithSameEnvironment = project.apiKeys().stream()
@@ -108,25 +109,12 @@ public class Service {
      * @return The project key if the API key is valid.
      */
     public String getProjectKeyFromApiKey(String apiKey) {
-        final var projectKey = repository.get("apiKey:" + apiKey);
-        if (projectKey == null) {
+        try {
+            final var projectKey = keyRepository.get("apiKey:" + apiKey);
+            return projectKey;
+        } catch (ObjectNotFoundException e) {
             throw new ForbiddenException("API key " + apiKey + " does not exist");
         }
-        return projectKey;
-    }
-
-    /**
-     * Verifies if an API key is valid, and returns the project-key if it is.
-     * 
-     * @param apiKey
-     * @return The project key if the API key is valid.
-     */
-    public Uni<String> getProjectKeyFromApiKeyAsync(String apiKey) {
-        final var projectKey = reactiveRedis.get("apiKey:" + apiKey);
-        if (projectKey == null) {
-            throw new ForbiddenException("API key " + apiKey + " does not exist");
-        }
-        return projectKey.map(response -> response.toString());
     }
 
     /**
@@ -137,33 +125,33 @@ public class Service {
      */
     public Project getProject(String projectKey, boolean obfuscate) {
         // Check if project with key exists
-        final var projectGetRequest = redis.get("project:" + projectKey);
-        if (projectGetRequest == null) {
+        try {
+            final var project = projectRepository.get("project:" + projectKey);
+
+            // Obfuscate all API keys
+            if (obfuscate) {
+                final var obfuscatedKeys = project.apiKeys().stream()
+                        .map(key -> ApiKey.builder()
+                                .apiKey(new UUID(0, 0))
+                                .createdAt(key.createdAt())
+                                .updatedAt(key.updatedAt())
+                                .description(key.description())
+                                .env(key.env())
+                                .build())
+                        .collect(Collectors.toList());
+                project.apiKeys().clear();
+                project.apiKeys().addAll(obfuscatedKeys);
+            }
+
+            return project;
+        } catch (ObjectNotFoundException e) {
             throw new NotFoundException("Project with key " + projectKey + " does not exist");
         }
-        final var project = util.convert(projectGetRequest.toString(), Project.class);
-
-        // Obfuscate all API keys
-        if (obfuscate) {
-            final var obfuscatedKeys = project.apiKeys().stream()
-                    .map(key -> ApiKey.builder()
-                            .apiKey(new UUID(0, 0))
-                            .createdAt(key.createdAt())
-                            .updatedAt(key.updatedAt())
-                            .description(key.description())
-                            .env(key.env())
-                            .build())
-                    .collect(Collectors.toList());
-            project.apiKeys().clear();
-            project.apiKeys().addAll(obfuscatedKeys);
-        }
-
-        return project;
     }
 
     public List<Project> getProjects() {
-        final var projects = redis.keys("project:*").stream()
-                .map(projectResponse -> projectResponse.toString())
+        final var projects = projectRepository.getAllKeysMatching("project:*")
+                .stream()
                 .map(projectKey -> projectKey.split("project:")[1])
                 .parallel()
                 .map(projectKey -> getProject(projectKey, true))

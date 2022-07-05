@@ -1,4 +1,4 @@
-package io.hreem.toggler.common;
+package io.hreem.toggler.common.http;
 
 import javax.enterprise.context.RequestScoped;
 

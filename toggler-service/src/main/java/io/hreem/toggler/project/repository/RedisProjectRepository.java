@@ -1,4 +1,4 @@
-package io.hreem.toggler.toggle.repository;
+package io.hreem.toggler.project.repository;
 
 import java.util.List;
 
@@ -8,15 +8,15 @@ import javax.inject.Inject;
 import io.hreem.toggler.common.Util;
 import io.hreem.toggler.common.repository.ObjectNotFoundException;
 import io.hreem.toggler.common.repository.Repository;
-import io.hreem.toggler.toggle.model.Toggle;
+import io.hreem.toggler.project.model.Project;
 import io.quarkus.redis.client.RedisClient;
 import io.hreem.toggler.common.repository.DBTypeQualifiers;
 import io.hreem.toggler.common.repository.DataTypeQualifiers;
 
 @ApplicationScoped
 @DBTypeQualifiers.Redis
-@DataTypeQualifiers.Toggle
-public class RedisRepository implements Repository<String, Toggle> {
+@DataTypeQualifiers.Project
+public class RedisProjectRepository implements Repository<String, Project> {
 
     @Inject
     Util util;
@@ -33,12 +33,12 @@ public class RedisRepository implements Repository<String, Toggle> {
     }
 
     @Override
-    public void create(String id, Toggle data) {
+    public void create(String id, Project data) {
         redis.set(List.of(id, util.convert(data)));
     }
 
     @Override
-    public void update(String id, Toggle data) {
+    public void update(String id, Project data) {
         redis.set(List.of(id, util.convert(data)));
     }
 
@@ -52,12 +52,12 @@ public class RedisRepository implements Repository<String, Toggle> {
     }
 
     @Override
-    public Toggle get(String id) throws ObjectNotFoundException {
+    public Project get(String id) throws ObjectNotFoundException {
         final var result = redis.get(id);
         if (result == null) {
             throw new ObjectNotFoundException("Object with id " + id + " does not exist");
         }
-        return util.convert(result.toString(), Toggle.class);
+        return util.convert(result.toString(), Project.class);
     }
 
     @Override
