@@ -27,7 +27,7 @@ export const createToggle = async (apiSecret, payload) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "api-secret": apiSecret,
+      "X-api-secret": apiSecret,
     },
     body: JSON.stringify(payload),
   });
@@ -43,7 +43,7 @@ export const createToggleVariation = async (apiSecret, toggleKey, payload) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "api-secret": apiSecret,
+        "X-api-secret": apiSecret,
       },
       body: JSON.stringify(payload),
     }
@@ -65,7 +65,7 @@ export const getProjects = async (_) => {
 export const getToggles = async (apiSecret) => {
   const response = await fetch(`${process.env.REACT_APP_BE_API_URL}/toggles`, {
     method: "GET",
-    headers: { "Content-Type": "application/json", "api-secret": apiSecret },
+    headers: { "Content-Type": "application/json", "X-api-secret": apiSecret },
   });
 
   const data = await response.json();
@@ -75,7 +75,7 @@ export const getToggles = async (apiSecret) => {
 export const toggleToggle = async (apiSecret, toggleKey) => {
   await fetch(`${process.env.REACT_APP_BE_API_URL}/toggles/${toggleKey}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json", "api-secret": apiSecret },
+    headers: { "Content-Type": "application/json", "X-api-secret": apiSecret },
   });
 };
 
@@ -84,7 +84,10 @@ export const toggleToggleVariant = async (apiSecret, toggleKey, variantKey) => {
     `${process.env.REACT_APP_BE_API_URL}/toggles/${toggleKey}/${variantKey}`,
     {
       method: "PUT",
-      headers: { "Content-Type": "application/json", "api-secret": apiSecret },
+      headers: {
+        "Content-Type": "application/json",
+        "X-api-secret": apiSecret,
+      },
     }
   );
 };
@@ -94,7 +97,10 @@ export const getProjectKeyFromApiKey = async (apiSecret) => {
     `${process.env.REACT_APP_BE_API_URL}/projects/verifykey`,
     {
       method: "GET",
-      headers: { "Content-Type": "application/json", "api-secret": apiSecret },
+      headers: {
+        "Content-Type": "application/json",
+        "X-api-secret": apiSecret,
+      },
     }
   );
 
@@ -110,7 +116,10 @@ export const getEnvironment = async (apiSecret, projectKey) => {
     `${process.env.REACT_APP_BE_API_URL}/projects/${projectKey}/environment`,
     {
       method: "GET",
-      headers: { "Content-Type": "application/json", "api-secret": apiSecret },
+      headers: {
+        "Content-Type": "application/json",
+        "X-api-secret": apiSecret,
+      },
     }
   );
 
@@ -126,7 +135,10 @@ export const getProject = async (apiSecret, projectKey) => {
     `${process.env.REACT_APP_BE_API_URL}/projects/${projectKey}`,
     {
       method: "GET",
-      headers: { "Content-Type": "application/json", "api-secret": apiSecret },
+      headers: {
+        "Content-Type": "application/json",
+        "X-api-secret": apiSecret,
+      },
     }
   );
 

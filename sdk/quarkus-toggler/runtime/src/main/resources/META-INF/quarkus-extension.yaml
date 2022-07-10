@@ -1,0 +1,9 @@
+name: Quarkus Toggler
+description: SDK for automatically fetching feature-toggle states from Toggler.
+metadata:
+  keywords:
+    - quarkus-toggler
+  guide: ...
+  categories:
+    - "miscellaneous"
+  status: "preview"

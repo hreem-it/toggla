@@ -14,7 +14,7 @@ public interface TogglerClient {
     @Path("/{toggleKey}")
     @Retry(maxRetries = 4, delay = 100)
     @Fallback(fallbackMethod = "fallbackGetToggleStatus")
-    Boolean getToggleStatus(@PathParam("toggleKey") String toggleKey, @HeaderParam("api-secret") String apiSecret);
+    Boolean getToggleStatus(@PathParam("toggleKey") String toggleKey, @HeaderParam("X-api-secret") String apiSecret);
 
     /**
      * Default to an unopened toggle if the service is unresponsive.

@@ -49,7 +49,7 @@ public class Resource {
 
     @GET
     @Path("/verifykey")
-    public Response getProjectKeyByApiKey(@HeaderParam("api-secret") String apiKey) {
+    public Response getProjectKeyByApiKey(@HeaderParam("X-api-secret") String apiKey) {
         final var projectKey = projectService.getProjectKeyFromApiKey(apiKey);
         return Response.ok(projectKey).build();
     }
@@ -57,7 +57,7 @@ public class Resource {
     @GET
     @Path("/{projectKey}/environment")
     public Response getProjectEnvironment(@PathParam("projectKey") String projectKey,
-            @HeaderParam("api-secret") String apiKey) {
+            @HeaderParam("X-api-secret") String apiKey) {
         final var environment = projectService.getProjectEnvironment(projectKey, apiKey);
         return Response.ok(environment).build();
     }

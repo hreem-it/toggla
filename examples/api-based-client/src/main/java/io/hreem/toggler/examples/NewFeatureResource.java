@@ -23,7 +23,7 @@ public class NewFeatureResource {
     @GET
     @Path("test")
     public boolean test() {
-        Log.info(headers.getHeaderString("api-secret"));
+        Log.info(headers.getHeaderString("X-api-secret"));
         return true;
     }
 

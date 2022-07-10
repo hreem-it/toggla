@@ -87,9 +87,9 @@ export default function PopupModal({
                   <div className="mt-5 sm:mt-6">
                     <input
                       type="password"
-                      name="api-secret"
-                      id="api-secret"
-                      autoComplete="api-secret"
+                      name="X-api-secret"
+                      id="X-api-secret"
+                      autoComplete="X-api-secret"
                       onChange={(e) => setInput(e.target.value)}
                       placeholder="00000000-0000-0000-0000-000000000000"
                       className="flex-1 text-center focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
@@ -100,10 +100,10 @@ export default function PopupModal({
                   <div className="mt-5 sm:mt-6">
                     <input
                       type="text"
-                      name="api-secret"
-                      id="api-secret"
-                      autoComplete="api-secret"
-                      value={apiKey.replace(/['"]+/g, '')}
+                      name="X-api-secret"
+                      id="X-api-secret"
+                      autoComplete="X-api-secret"
+                      value={apiKey.replace(/['"]+/g, "")}
                       placeholder="00000000-0000-0000-0000-000000000000"
                       className="flex-1 text-center focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
                       disabled
