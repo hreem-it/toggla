@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-import io.hreem.toggler.quarkus.runtime.TogglerClient;
+import io.hreem.toggler.quarkus.TogglerClient;
 
 @Path("/fruit")
 @ApplicationScoped
