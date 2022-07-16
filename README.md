@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/Hreem-IT/toggla/blob/d0617b1ba78df940e87c6e9f7fd12588810ebe04/etc/toggla-logo-transparent.png?raw=true" data-canonical-src="https://github.com/Hreem-IT/toggla/blob/d0617b1ba78df940e87c6e9f7fd12588810ebe04/etc/toggla-logo-transparent.png?raw=true" width="700" />  </p>
+  <img src="https://github.com/hreem-it/toggler/raw/master/etc/toggla-logo-transparent.png?raw=true" data-canonical-src="https://github.com/hreem-it/toggler/raw/master/etc/toggla-logo-transparent.png?raw=true" width="700" />  </p>
 
 # Toggla - Feature toggling
 
