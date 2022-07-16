@@ -1,0 +1,18 @@
+<server description="Sample Liberty server">
+    <featureManager>
+        <feature>microProfile-5.0</feature>
+    </featureManager>
+
+    <variable name="default.http.port" defaultValue="9080" />
+    <variable name="default.https.port" defaultValue="9443" />
+
+    <webApplication location="guide-getting-started.war" contextRoot="/dev" />
+    <mpMetrics authentication="false" />
+
+    <logging traceSpecification="com.ibm.ws.microprofile.health.*=all" />
+    <logging consoleLogLevel="INFO" />
+
+    <httpEndpoint host="*" httpPort="${default.http.port}" httpsPort="${default.https.port}" id="defaultHttpEndpoint" />
+
+    <variable name="io_openliberty_guides_system_inMaintenance" value="false" />
+</server>
