@@ -1,4 +1,4 @@
-package io.hreem.toggler.examples;
+package io.hreem.toggla.examples;
 
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;

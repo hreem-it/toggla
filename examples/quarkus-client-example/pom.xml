@@ -2,7 +2,7 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>io.hreem.toggler.examples</groupId>
+  <groupId>io.hreem.toggla.examples</groupId>
   <artifactId>quarkus-client-example</artifactId>
   <version>1.1.0</version>
 
@@ -32,8 +32,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.hreem.toggler</groupId>
-      <artifactId>quarkus-toggler</artifactId>
+      <groupId>io.hreem.toggla</groupId>
+      <artifactId>quarkus-toggla</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

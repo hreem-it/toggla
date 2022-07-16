@@ -2,18 +2,18 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   labels:
-    app.kubernetes.io/part-of: toggler
-    app: toggler-web
-  name: toggler-web
+    app.kubernetes.io/part-of: toggla
+    app: toggla-web
+  name: toggla-web
 spec:
-  host: toggler.se
+  host: toggla.se
   port:
     targetPort: 8080-tcp
   tls:
     termination: edge
   to:
     kind: Service
-    name: toggler-web
+    name: toggla-web
     weight: 100
   wildcardPolicy: None
 
@@ -22,17 +22,17 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   labels:
-    app.kubernetes.io/part-of: toggler
-    app: toggler-service
-  name: toggler-service
+    app.kubernetes.io/part-of: toggla
+    app: toggla-service
+  name: toggla-service
 spec:
-  host: toggler-service.se
+  host: toggla-service.se
   port:
     targetPort: 8080
   tls:
     termination: edge
   to:
     kind: Service
-    name: toggler-service
+    name: toggla-service
     weight: 100
   wildcardPolicy: None

@@ -1,6 +1,6 @@
-package io.hreem.toggler.examples;
+package io.hreem.toggla.examples;
 
-import io.hreem.toggler.TogglerClient;
+import io.hreem.toggla.TogglerClient;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -11,13 +11,13 @@ import jakarta.ws.rs.Path;
 public class Resource {
 
     @Inject
-    TogglerClient toggler;
+    TogglerClient toggla;
 
     @GET
     public String get() {
-        if (toggler.isFeatureEnabled("new-fruit-feature")) {
+        if (toggla.isFeatureEnabled("new-fruit-feature")) {
             return getNewFruit();
-        } else if (toggler.isFeatureEnabled("new-fruit-feature", "variant-1")) {
+        } else if (toggla.isFeatureEnabled("new-fruit-feature", "variant-1")) {
             return getNewFruitVar1();
         }
         return getOldFruit();

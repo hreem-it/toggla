@@ -1,6 +1,7 @@
 apiVersion: v1
 data:
-  nginx.conf: "# For more information on configuration, see:\r\n#   * Official English
+  nginx.conf:
+    "# For more information on configuration, see:\r\n#   * Official English
     Documentation: http://nginx.org/en/docs/\r\n#   * Official Russian Documentation:
     http://nginx.org/ru/docs/\r\n\r\n\r\nworker_processes auto;\r\nerror_log /var/opt/rh/rh-nginx112/log/nginx/error.log;\r\npid
     /var/opt/rh/rh-nginx112/run/nginx/nginx.pid;\r\n\r\n# Load dynamic modules. See
@@ -73,6 +74,6 @@ data:
     \ index.html index.htm;\r\n    #    }\r\n    #}\r\n\r\n}"
 kind: ConfigMap
 metadata:
-  name: toggler-web-nginx-config
+  name: toggla-web-nginx-config
   labels:
-    app.kubernetes.io/part-of: toggler
+    app.kubernetes.io/part-of: toggla

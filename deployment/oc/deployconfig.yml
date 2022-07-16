@@ -2,18 +2,18 @@ apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
   labels:
-    app: toggler-service
-    app.kubernetes.io/name: toggler-service
-    app.kubernetes.io/part-of: toggler
-  name: toggler-service
+    app: toggla-service
+    app.kubernetes.io/name: toggla-service
+    app.kubernetes.io/part-of: toggla
+  name: toggla-service
 spec:
   replicas: 1
   selector:
-    app: toggler-service
+    app: toggla-service
   template:
     metadata:
       labels:
-        app: toggler-service
+        app: toggla-service
     spec:
       containers:
         - command:
@@ -22,7 +22,7 @@ spec:
             - -Djava.util.logging.manager=org.jboss.logmanager.LogManager
             - -jar
             - /deployments/quarkus-run.jar
-          image: default/toggler-service:latest
+          image: default/toggla-service:latest
           imagePullPolicy: Always
           env:
             - name: KUBERNETES_NAMESPACE
@@ -36,7 +36,7 @@ spec:
             requests:
               cpu: 1000m
               memory: 1Gi
-          name: toggler-service
+          name: toggla-service
           ports:
             - containerPort: 8080
               name: http
@@ -49,84 +49,84 @@ kind: DeploymentConfig
 metadata:
   generation: 1
   labels:
-    app: toggler-web
-    app.kubernetes.io/name: toggler-web
-    app.kubernetes.io/part-of: toggler
-  name: toggler-web
+    app: toggla-web
+    app.kubernetes.io/name: toggla-web
+    app.kubernetes.io/part-of: toggla
+  name: toggla-web
 spec:
   replicas: 1
   revisionHistoryLimit: 10
   selector:
-    app: toggler-web
-    deploymentconfig: toggler-web
+    app: toggla-web
+    deploymentconfig: toggla-web
   strategy:
     activeDeadlineSeconds: 21600
     recreateParams:
       timeoutSeconds: 600
-    resources: { }
+    resources: {}
     type: Rolling
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: toggler-web
-        deploymentconfig: toggler-web
+        app: toggla-web
+        deploymentconfig: toggla-web
     spec:
       containers:
-      - image: default/toggler-web:latest
-        imagePullPolicy: Always
-        lifecycle:
-          postStart:
-            exec:
-              command:
-                - /bin/sh
-                - '-c'
-                - >-
-                  for f in $(find /opt/app-root/src -regex '.*main.*\.js'); do
-                  envsubst "$(printenv | grep ENV | cut -d'=' -f1 | awk
-                  '{print "$" $0}' | paste -sd " ")" < $f > $f.tmp; cp $f.tmp
-                  $f ;done
-        name: toggler-web
-        ports:
-          - containerPort: 8080
-            protocol: TCP
-        resources: { }
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-        volumeMounts:
-          - mountPath: /etc/opt/rh/rh-nginx112/nginx/
-            name: nginx-config
+        - image: default/toggla-web:latest
+          imagePullPolicy: Always
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - "-c"
+                  - >-
+                    for f in $(find /opt/app-root/src -regex '.*main.*\.js'); do
+                    envsubst "$(printenv | grep ENV | cut -d'=' -f1 | awk
+                    '{print "$" $0}' | paste -sd " ")" < $f > $f.tmp; cp $f.tmp
+                    $f ;done
+          name: toggla-web
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /etc/opt/rh/rh-nginx112/nginx/
+              name: nginx-config
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
-      securityContext: { }
+      securityContext: {}
       terminationGraceperiodSeconds: 10
       volumes:
         - name: nginx-config
           configMap:
             defaultMode: 420
-            name: toggler-web-nginx-config
+            name: toggla-web-nginx-config
   test: false
 ---
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
   labels:
-    app: toggler-redis-datasource
-    app.kubernetes.io/name: toggler-redis-datasource
-    app.kubernetes.io/part-of: toggler
-  name: toggler-redis-datasource
+    app: toggla-redis-datasource
+    app.kubernetes.io/name: toggla-redis-datasource
+    app.kubernetes.io/part-of: toggla
+  name: toggla-redis-datasource
 spec:
   replicas: 1
   selector:
-    app: toggler-redis-datasource
+    app: toggla-redis-datasource
   template:
     metadata:
       labels:
-        app: toggler-redis-datasource
+        app: toggla-redis-datasource
     spec:
       containers:
-        - name: toggler-redis-datasource
+        - name: toggla-redis-datasource
           image: redis
           command:
             - redis-server
@@ -151,10 +151,10 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: toggler-redis-datasource-volume-claim
+            claimName: toggla-redis-datasource-volume-claim
         - name: config
           configMap:
-            name: toggler-redis-datasource-config
+            name: toggla-redis-datasource-config
             items:
               - key: redis-config
                 path: redis.conf

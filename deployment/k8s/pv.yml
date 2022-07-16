@@ -1,7 +1,7 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: toggler-redis-datasource-volume
+  name: toggla-redis-datasource-volume
 spec:
   storageClassName: local-storage
   capacity:

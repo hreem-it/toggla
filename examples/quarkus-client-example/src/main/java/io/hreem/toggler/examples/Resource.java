@@ -1,24 +1,24 @@
-package io.hreem.toggler.examples;
+package io.hreem.toggla.examples;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-import io.hreem.toggler.quarkus.TogglerClient;
+import io.hreem.toggla.quarkus.TogglerClient;
 
 @Path("/fruit")
 @ApplicationScoped
 public class Resource {
 
     @Inject
-    TogglerClient toggler;
+    TogglerClient toggla;
 
     @GET
     public String get() {
-        if (toggler.isFeatureEnabled("new-fruit-feature")) {
+        if (toggla.isFeatureEnabled("new-fruit-feature")) {
             return getNewFruit();
-        } else if (toggler.isFeatureEnabled("new-fruit-feature", "variant-1")) {
+        } else if (toggla.isFeatureEnabled("new-fruit-feature", "variant-1")) {
             return getNewFruitVar1();
         }
         return getOldFruit();

@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: toggler-redis-datasource-config
+  name: toggla-redis-datasource-config
 data:
   redis-config: |
     maxmemory 2mb
-    maxmemory-policy allkeys-lru 
+    maxmemory-policy allkeys-lru

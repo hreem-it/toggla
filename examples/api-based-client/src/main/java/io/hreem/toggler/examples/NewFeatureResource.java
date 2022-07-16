@@ -1,4 +1,4 @@
-package io.hreem.toggler.examples;
+package io.hreem.toggla.examples;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

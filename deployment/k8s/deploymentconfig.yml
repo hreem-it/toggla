@@ -1,19 +1,19 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: toggler-redis-datasource
+  name: toggla-redis-datasource
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: toggler-redis-datasource
+      app: toggla-redis-datasource
   template:
     metadata:
       labels:
-        app: toggler-redis-datasource
+        app: toggla-redis-datasource
     spec:
       containers:
-        - name: toggler-redis-datasource
+        - name: toggla-redis-datasource
           image: redis
           command:
             - redis-server
@@ -34,10 +34,10 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: toggler-redis-datasource-volume-claim
+            claimName: toggla-redis-datasource-volume-claim
         - name: config
           configMap:
-            name: toggler-redis-datasource-config
+            name: toggla-redis-datasource-config
             items:
               - key: redis-config
                 path: redis.conf
@@ -47,20 +47,20 @@ spec:
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: toggler-service
+  name: toggla-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: toggler-service
+      app: toggla-service
   template:
     metadata:
       labels:
-        app: toggler-service
+        app: toggla-service
     spec:
       containers:
-        - name: toggler-service
-          image: hreemit/toggler-service:latest
+        - name: toggla-service
+          image: hreemit/toggla-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -69,20 +69,20 @@ spec:
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: toggler-web
+  name: toggla-web
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: toggler-web
+      app: toggla-web
   template:
     metadata:
       labels:
-        app: toggler-web
+        app: toggla-web
     spec:
       containers:
-        - name: toggler-web
-          image: hreemit/toggler-web:latest
+        - name: toggla-web
+          image: hreemit/toggla-web:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80

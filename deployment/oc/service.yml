@@ -2,17 +2,17 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/part-of: toggler
-    app: toggler-service
-  name: toggler-service
+    app.kubernetes.io/part-of: toggla
+    app: toggla-service
+  name: toggla-service
 spec:
   ports:
     - port: 8080
       protocol: TCP
       targetPort: 8080
   selector:
-    app: toggler-service
-    deploymentconfig: toggler-service
+    app: toggla-service
+    deploymentconfig: toggla-service
   sessionAffinity: None
   type: ClusterIP
 ---
@@ -20,9 +20,9 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/part-of: toggler
-    app: toggler-web
-  name: toggler-web
+    app.kubernetes.io/part-of: toggla
+    app: toggla-web
+  name: toggla-web
 spec:
   ports:
     - name: 8080-tcp
@@ -30,22 +30,22 @@ spec:
       protocol: TCP
       targetPort: 8080
   selector:
-    app: toggler-web
-    deploymentconfig: toggler-web
+    app: toggla-web
+    deploymentconfig: toggla-web
   sessionAffinity: None
   type: ClusterIP
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: toggler-redis-datasource
+  name: toggla-redis-datasource
   labels:
-    app.kubernetes.io/part-of: toggler
-    app: toggler-redis-datasource
+    app.kubernetes.io/part-of: toggla
+    app: toggla-redis-datasource
 spec:
   type: ClusterIP
   selector:
-    app: toggler-redis-datasource
+    app: toggla-redis-datasource
   ports:
     - protocol: TCP
       port: 6379

@@ -2,16 +2,16 @@ apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
   labels:
-    app.kubernetes.io/part-of: toggler
-    build: toggler-service
-  name: toggler-service
+    app.kubernetes.io/part-of: toggla
+    build: toggla-service
+  name: toggla-service
 spec:
   failedBuildsHistoryLimit: 5
   nodeSelector: null
   output:
     to:
       kind: DockerImage
-      name: default/toggler-service:latest
+      name: default/toggla-service:latest
   postCommit: {}
   resources: {}
   runPolicy: Serial
@@ -30,16 +30,16 @@ apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
   labels:
-    app.kubernetes.io/part-of: toggler
-    build: toggler-web
-  name: toggler-web
+    app.kubernetes.io/part-of: toggla
+    build: toggla-web
+  name: toggla-web
 spec:
   failedBuildsHistoryLimit: 5
   nodeSelector: null
   output:
     to:
       kind: DockerImage
-      name: default/toggler-web:latest
+      name: default/toggla-web:latest
   postCommit: {}
   resources:
     limits:

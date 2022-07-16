@@ -1,4 +1,4 @@
-package io.hreem.toggler.examples;
+package io.hreem.toggla.examples;
 
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: toggler-redis-datasource-volume-claim
+  name: toggla-redis-datasource-volume-claim
 spec:
   storageClassName: local-storage
   accessModes:
