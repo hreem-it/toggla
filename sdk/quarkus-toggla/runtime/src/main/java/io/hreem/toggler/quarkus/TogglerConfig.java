@@ -5,24 +5,24 @@ import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
 
 @ConfigRoot(name = "toggla", phase = ConfigPhase.BUILD_AND_RUN_TIME_FIXED)
-public class TogglerConfig {
+public class TogglaConfig {
 
     /**
-     * The API key to use for the Toggler API.
+     * The API key to use for the Toggla API.
      * quarkus.toggla.api-key
      */
     @ConfigItem
     public String apiKey;
 
     /**
-     * Base URI of the Toggler API. e.g mytoggla.instance.com
+     * Base URI of the Toggla API. e.g mytoggla.instance.com
      * quarkus.toggla.api-key
      */
     @ConfigItem
     public String baseUri;
 
     /**
-     * How often to poll the Toggler API for changes.
+     * How often to poll the Toggla API for changes.
      * quarkus.toggla.auto-toggle-refresh-rate=30s
      */
     @ConfigItem

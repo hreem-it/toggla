@@ -2,13 +2,13 @@ package io.hreem.toggla.quarkus.deployment;
 
 import io.hreem.toggla.quarkus.AuthHeaderFactory;
 import io.hreem.toggla.quarkus.Poller;
-import io.hreem.toggla.quarkus.TogglerClient;
+import io.hreem.toggla.quarkus.TogglaClient;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 
-class QuarkusTogglerProcessor {
+class QuarkusTogglaProcessor {
 
     private static final String FEATURE = "quarkus-toggla";
 
@@ -18,7 +18,7 @@ class QuarkusTogglerProcessor {
         additionalBeanProducer.produce(unremovableProducer);
         unremovableProducer = AdditionalBeanBuildItem.unremovableOf(AuthHeaderFactory.class);
         additionalBeanProducer.produce(unremovableProducer);
-        unremovableProducer = AdditionalBeanBuildItem.unremovableOf(TogglerClient.class);
+        unremovableProducer = AdditionalBeanBuildItem.unremovableOf(TogglaClient.class);
         additionalBeanProducer.produce(unremovableProducer);
         return new FeatureBuildItem(FEATURE);
     }

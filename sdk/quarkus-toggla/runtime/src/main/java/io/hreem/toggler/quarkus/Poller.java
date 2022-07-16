@@ -24,14 +24,14 @@ public class Poller {
     @ConfigProperty(name = "quarkus.toggla.base-uri")
     String baseUri;
 
-    private TogglerService togglaService;
+    private TogglaService togglaService;
 
     @PostConstruct
     void init() {
         togglaService = RestClientBuilder.newBuilder()
                 .baseUri(URI.create(baseUri))
                 .register(RequestExceptionMapper.class)
-                .build(TogglerService.class);
+                .build(TogglaService.class);
     }
 
     @Scheduled(every = "{quarkus.toggla.auto-toggle-refresh-rate}")
@@ -66,7 +66,7 @@ public class Poller {
                 Log.debug("Polled toggle " + toggleKey + " for the first time with status " + status);
                 return status;
             } catch (Exception e) {
-                Log.error("Failed to fetch toggle from Toggler API, falling back to 'false'", e);
+                Log.error("Failed to fetch toggle from Toggla API, falling back to 'false'", e);
                 return false;
             }
         }
@@ -85,7 +85,7 @@ public class Poller {
             Log.debug("Renewed toggle " + toggleKey + " with status " + status);
             return status;
         } catch (Exception e) {
-            Log.error("Failed to fetch toggle from Toggler API, falling back to 'false'", e);
+            Log.error("Failed to fetch toggle from Toggla API, falling back to 'false'", e);
             return false;
         }
 

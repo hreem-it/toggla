@@ -3,5 +3,5 @@ package io.hreem.toggla.quarkus.it;
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
 @QuarkusIntegrationTest
-public class QuarkusTogglerResourceIT extends QuarkusTogglerResourceTest {
+public class QuarkusTogglaResourceIT extends QuarkusTogglaResourceTest {
 }

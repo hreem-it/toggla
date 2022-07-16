@@ -9,7 +9,7 @@ import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 @RegisterRestClient(baseUri = "http://localhost:8080/toggles")
-public interface TogglerClient {
+public interface TogglaClient {
 
     @Path("/{toggleKey}")
     @Retry(maxRetries = 4, delay = 100)

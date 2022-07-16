@@ -4,10 +4,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
-public class TogglerClient {
+public class TogglaClient {
 
     @Inject
-    TogglerService poller;
+    TogglaService poller;
 
     public boolean isFeatureEnabled(String toggleKey) {
         return poller.fetch(toggleKey, null);

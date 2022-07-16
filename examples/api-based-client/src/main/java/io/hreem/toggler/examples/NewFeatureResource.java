@@ -15,7 +15,7 @@ import io.quarkus.logging.Log;
 public class NewFeatureResource {
 
     @Inject
-    TogglerService toggle;
+    TogglaService toggle;
 
     @Context
     HttpHeaders headers;

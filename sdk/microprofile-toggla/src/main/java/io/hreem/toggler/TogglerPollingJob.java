@@ -12,16 +12,16 @@ import org.quartz.JobExecutionException;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.ForbiddenException;
 
-public class TogglerPollingJob implements Job {
+public class TogglaPollingJob implements Job {
 
-    private final static Logger Log = Logger.getLogger(TogglerPollingJob.class.getName());
+    private final static Logger Log = Logger.getLogger(TogglaPollingJob.class.getName());
 
     @Inject
     ToggleStore toggleStore;
 
     @Inject
     @RestClient
-    TogglerGateway togglaGateway;
+    TogglaGateway togglaGateway;
 
     @Inject
     Utils utils;
@@ -56,10 +56,10 @@ public class TogglerPollingJob implements Job {
             Log.log(Level.FINE, "Renewed toggle " + toggleKey + " with status " + status);
             return status;
         } catch (ForbiddenException e) {
-            return utils.handleToggleCallException("Incorrect API Key provided, cannot invoke Toggler API", toggleKey,
+            return utils.handleToggleCallException("Incorrect API Key provided, cannot invoke Toggla API", toggleKey,
                     e);
         } catch (Exception e) {
-            return utils.handleToggleCallException("Failed to fetch toggle from Toggler API, falling back to 'false'",
+            return utils.handleToggleCallException("Failed to fetch toggle from Toggla API, falling back to 'false'",
                     toggleKey, e);
         }
     }

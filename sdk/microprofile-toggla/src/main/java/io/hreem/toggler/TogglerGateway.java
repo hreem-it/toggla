@@ -15,7 +15,7 @@ import jakarta.ws.rs.PathParam;
 @RegisterRestClient(configKey = "toggla")
 @RegisterClientHeaders(AuthHeaderFactory.class)
 @RegisterProvider(RequestExceptionMapper.class)
-public interface TogglerGateway {
+public interface TogglaGateway {
 
     @GET
     @Path("/{toggleKey}/status")

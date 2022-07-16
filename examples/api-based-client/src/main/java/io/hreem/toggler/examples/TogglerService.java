@@ -7,7 +7,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
-public class TogglerService {
+public class TogglaService {
 
     @Inject
     @ConfigProperty(name = "toggla.api.secret")
@@ -15,7 +15,7 @@ public class TogglerService {
 
     @Inject
     @RestClient
-    TogglerClient togglaClient;
+    TogglaClient togglaClient;
 
     public boolean isOpened(String toggleKey) {
         return togglaClient.getToggleStatus(toggleKey, apiSecret);

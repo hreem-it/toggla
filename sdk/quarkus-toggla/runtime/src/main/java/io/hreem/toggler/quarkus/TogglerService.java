@@ -8,7 +8,7 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 
 @Path("toggles")
 @RegisterClientHeaders(AuthHeaderFactory.class)
-public interface TogglerService {
+public interface TogglaService {
 
     @GET
     @Path("/{toggleKey}/status")

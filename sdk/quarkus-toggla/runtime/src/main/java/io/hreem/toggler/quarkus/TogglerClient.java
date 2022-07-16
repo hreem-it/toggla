@@ -4,7 +4,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class TogglerClient {
+public class TogglaClient {
 
     @Inject
     Poller poller;

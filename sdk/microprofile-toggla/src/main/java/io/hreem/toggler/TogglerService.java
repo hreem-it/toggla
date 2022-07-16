@@ -18,9 +18,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @ApplicationScoped
-public class TogglerService {
+public class TogglaService {
 
-    private final static Logger Log = Logger.getLogger(TogglerService.class.getName());
+    private final static Logger Log = Logger.getLogger(TogglaService.class.getName());
 
     @Inject
     @ConfigProperty(name = "toggla.auto-toggle-refresh-rate.cron", defaultValue = "0/30 * * 1/1 * ? *")
@@ -34,7 +34,7 @@ public class TogglerService {
 
     @Inject
     @RestClient
-    TogglerGateway togglaGateway;
+    TogglaGateway togglaGateway;
 
     @Inject
     Utils utils;
@@ -59,7 +59,7 @@ public class TogglerService {
         final var sched = sf.getScheduler();
         sched.setJobFactory(jobFactory);
 
-        final var job = newJob(TogglerPollingJob.class)
+        final var job = newJob(TogglaPollingJob.class)
                 .withIdentity("TogglePoller")
                 .build();
 
@@ -91,11 +91,11 @@ public class TogglerService {
                         status);
                 return status;
             } catch (ForbiddenException e) {
-                return utils.handleToggleCallException("Incorrect API Key provided, cannot invoke Toggler API",
+                return utils.handleToggleCallException("Incorrect API Key provided, cannot invoke Toggla API",
                         toggleKey, e);
             } catch (Exception e) {
                 return utils.handleToggleCallException(
-                        "Failed to fetch toggle from Toggler API, falling back to 'false'",
+                        "Failed to fetch toggle from Toggla API, falling back to 'false'",
                         toggleKey, e);
             }
         }

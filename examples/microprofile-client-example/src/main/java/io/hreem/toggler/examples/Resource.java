@@ -1,6 +1,6 @@
 package io.hreem.toggla.examples;
 
-import io.hreem.toggla.TogglerClient;
+import io.hreem.toggla.TogglaClient;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -11,7 +11,7 @@ import jakarta.ws.rs.Path;
 public class Resource {
 
     @Inject
-    TogglerClient toggla;
+    TogglaClient toggla;
 
     @GET
     public String get() {

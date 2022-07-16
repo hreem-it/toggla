@@ -5,14 +5,14 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-import io.hreem.toggla.quarkus.TogglerClient;
+import io.hreem.toggla.quarkus.TogglaClient;
 
 @Path("/fruit")
 @ApplicationScoped
 public class Resource {
 
     @Inject
-    TogglerClient toggla;
+    TogglaClient toggla;
 
     @GET
     public String get() {

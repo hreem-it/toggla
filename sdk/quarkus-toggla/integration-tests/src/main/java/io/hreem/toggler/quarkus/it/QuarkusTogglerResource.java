@@ -21,14 +21,14 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-import io.hreem.toggla.quarkus.TogglerClient;
+import io.hreem.toggla.quarkus.TogglaClient;
 
 @Path("/quarkus-toggla")
 @ApplicationScoped
-public class QuarkusTogglerResource {
+public class QuarkusTogglaResource {
 
     @Inject
-    TogglerClient togglaClient;
+    TogglaClient togglaClient;
 
     @GET
     public Boolean hello() {
