@@ -8,6 +8,7 @@ import {
   MenuAlt2Icon,
   SwitchHorizontalIcon,
   XIcon,
+  CogIcon,
 } from "@heroicons/react/outline";
 import { Link, Navigate, Route, Routes } from "react-router-dom";
 import ProjectPage from "./project";
@@ -19,6 +20,7 @@ import ProtectedRoute from "../core/components/ProtectedRoute";
 import NewToggle from "./toggles/NewToggle";
 import KeysPage from "./keys";
 import NewKey from "./keys/NewKey";
+import SettingsPage from "./settings";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -61,6 +63,13 @@ export default function Example() {
     //   current: location[location.length - 1].includes("reports"),
     //   indent: true,
     // },
+    {
+      name: "Settings",
+      href: `/projects/${selectedProject?.projectKey}/settings`,
+      icon: CogIcon,
+      current: location[location.length - 1].includes("settings"),
+      indent: true,
+    },
   ];
 
   const apiDocs = {
@@ -210,11 +219,11 @@ export default function Example() {
                           item.current
                             ? "text-gray-500"
                             : "text-gray-400 group-hover:text-gray-500",
-                          "flex-shrink-0 h-6 w-6"
+                          "flex-shrink-0 h-5 w-5"
                         )}
                         aria-hidden="true"
                       />
-                      {item.name}
+                      <p className="pl-1">{item.name}</p>
                     </Link>
                   ))}
               </nav>
@@ -248,7 +257,7 @@ export default function Example() {
             <div className="sticky top-0 z-10 flex-shrink-0 h-16 bg-white border-b border-gray-200 flex">
               <button
                 type="button"
-                className="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden"
+                className="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-hanpurple-500 md:hidden"
                 onClick={() => setSidebarOpen(true)}
               >
                 <span className="sr-only">Open sidebar</span>
@@ -293,7 +302,7 @@ export default function Example() {
                 <div className="ml-4 flex items-center md:ml-6">
                   <button
                     type="button"
-                    className="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-hanpurple-500"
                   >
                     <span className="sr-only">View notifications</span>
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
@@ -337,6 +346,14 @@ export default function Example() {
                     element={
                       <ProtectedRoute>
                         <NewKey />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/projects/:projectKey/settings"
+                    element={
+                      <ProtectedRoute>
+                        <SettingsPage />
                       </ProtectedRoute>
                     }
                   />

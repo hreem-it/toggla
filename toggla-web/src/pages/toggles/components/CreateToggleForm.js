@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { createToggle } from "../../../core/api/api";
 import Alert from "../../../core/components/Alert";
@@ -32,6 +32,19 @@ export default function CreateToggleForm() {
     setLoading(false);
   };
 
+  useEffect(() => {
+    const listener = (event) => {
+      if (event.code === "Enter" || event.code === "NumpadEnter") {
+        event.preventDefault();
+        handleSubmit();
+      }
+    };
+    document.addEventListener("keydown", listener);
+    return () => {
+      document.removeEventListener("keydown", listener);
+    };
+  }, [toggleKey, toggleDescription]);
+
   return (
     <>
       <form className="space-y-8 divide-y divide-gray-200">
@@ -59,8 +72,14 @@ export default function CreateToggleForm() {
                     name="key"
                     type="text"
                     placeholder="my-new-feature"
-                    onChange={(e) => setToggleKey(e.target.value)}
-                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md"
+                    onChange={(e) => {
+                      const key = e.target.value
+                        .toLowerCase()
+                        .replace(/\s/g, "-");
+                      setToggleKey(key);
+                    }}
+                    value={toggleKey}
+                    className="shadow-sm focus:ring-hanpurple-500 focus:border-hanpurple-500 block w-full sm:text-sm border border-gray-300 rounded-md"
                     defaultValue={""}
                   />
                 </div>
@@ -77,7 +96,8 @@ export default function CreateToggleForm() {
                     rows={3}
                     placeholder="Enable new checkout flow..."
                     onChange={(e) => setToggleDescription(e.target.value)}
-                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md"
+                    value={toggleDescription}
+                    className="shadow-sm focus:ring-hanpurple-500 focus:border-hanpurple-500 block w-full sm:text-sm border border-gray-300 rounded-md"
                     defaultValue={""}
                   />
                 </div>
@@ -95,14 +115,14 @@ export default function CreateToggleForm() {
             <Link to={`/projects/${selectedProject.projectKey}/toggles`}>
               <button
                 type="button"
-                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-hanpurple-500"
               >
                 Cancel
               </button>
             </Link>
             <button
               type="button"
-              className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-hanpurple-700 hover:bg-hanpurple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-hanpurple-500"
               onClick={handleSubmit}
             >
               {loading && <ButtonLoadingSpinner />}

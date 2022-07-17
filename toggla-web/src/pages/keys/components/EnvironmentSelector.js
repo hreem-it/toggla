@@ -56,7 +56,7 @@ export default function EnvironmentSelector({ selected, setSelected }) {
                   ? "rounded-bl-md rounded-br-md"
                   : "",
                 checked
-                  ? "bg-indigo-50 border-indigo-200 z-10"
+                  ? "bg-hanpurple-50 border-hanpurple-200 z-10"
                   : "border-gray-200",
                 "relative border p-4 flex cursor-pointer focus:outline-none"
               )
@@ -67,9 +67,9 @@ export default function EnvironmentSelector({ selected, setSelected }) {
                 <span
                   className={classNames(
                     checked
-                      ? "bg-indigo-600 border-transparent"
+                      ? "bg-hanpurple-700 border-transparent"
                       : "bg-white border-gray-300",
-                    active ? "ring-2 ring-offset-2 ring-indigo-500" : "",
+                    active ? "ring-2 ring-offset-2 ring-hanpurple-500" : "",
                     "h-4 w-4 mt-0.5 cursor-pointer shrink-0 rounded-full border flex items-center justify-center"
                   )}
                   aria-hidden="true"
@@ -80,7 +80,7 @@ export default function EnvironmentSelector({ selected, setSelected }) {
                   <RadioGroup.Label
                     as="span"
                     className={classNames(
-                      checked ? "text-indigo-900" : "text-gray-900",
+                      checked ? "text-hanpurple-900" : "text-gray-900",
                       "block text-sm font-medium"
                     )}
                   >
@@ -90,7 +90,7 @@ export default function EnvironmentSelector({ selected, setSelected }) {
                   <RadioGroup.Description
                     as="span"
                     className={classNames(
-                      checked ? "text-indigo-700" : "text-gray-500",
+                      checked ? "text-hanpurple-800" : "text-gray-500",
                       "block text-sm"
                     )}
                   >

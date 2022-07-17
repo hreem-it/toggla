@@ -46,23 +46,23 @@ public class Service {
     /**
      * Creates a new project.
      * 
-     * @param request
+     * @param projectKey
      */
-    public void createProject(@Valid CreateProjectRequest request) {
+    public void createProject(@Valid CreateProjectRequest projectKey) {
         // Check if project with key already exists
-        if (redis.exists(List.of("project:" + request.projectKey())).toBoolean()) {
-            throw new BadRequestException("Project with key " + request.projectKey() + " already exists");
+        if (projectRepository.exists("project:" + projectKey.projectKey())) {
+            throw new BadRequestException("Project with key " + projectKey.projectKey() + " already exists");
         }
 
         // Create new project
         final var newProject = Project.builder()
-                .projectKey(request.projectKey())
-                .description(request.description())
+                .projectKey(projectKey.projectKey())
+                .description(projectKey.description())
                 .createdAt(new Date())
                 .updatedAt(new Date())
                 .apiKeys(List.of())
                 .build();
-        projectRepository.create("project:" + request.projectKey(), newProject);
+        projectRepository.create("project:" + projectKey.projectKey(), newProject);
     }
 
     /**
@@ -93,8 +93,8 @@ public class Service {
                     .env(request.env())
                     .build();
             project.apiKeys().add(newAPIKey);
-            redis.set(List.of("project:" + projectKey, util.convert(project)));
-            redis.set(List.of("apiKey:" + newAPIKey.apiKey(), projectKey));
+            projectRepository.update("project:" + projectKey, project);
+            keyRepository.create("apiKey:" + newAPIKey.apiKey(), projectKey);
 
             return newAPIKey.apiKey();
         } catch (ObjectNotFoundException e) {
@@ -168,6 +168,21 @@ public class Service {
                 .orElseThrow(() -> new ForbiddenException("API key " + apiKey + " does not exist"));
 
         return matchingKey.env().toString();
+    }
+
+    public void deleteProject(String projectKey) throws ObjectNotFoundException {
+        // Check if project with key exists
+        try {
+            final var project = projectRepository.get("project:" + projectKey);
+            // delete project
+            projectRepository.delete("project:" + projectKey);
+            // delete all api keys
+            for (var key : project.apiKeys()) {
+                keyRepository.delete("apiKey:" + key.apiKey());
+            }
+        } catch (ObjectNotFoundException e) {
+            throw new NotFoundException("Project with key " + projectKey + " does not exist");
+        }
     }
 
 }

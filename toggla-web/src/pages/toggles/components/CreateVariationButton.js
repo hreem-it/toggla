@@ -10,7 +10,7 @@ export default function CreateVariationButton() {
       <button
         type="button"
         onClick={() => setOpenCreationModal(true)}
-        className="relative block w-full border-2 border-gray-300 border-dashed rounded-lg p-5 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        className="relative block w-full border-2 border-gray-300 border-dashed rounded-lg p-5 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-azure-500"
       >
         <div className="flex justify-center">
           <SwitchHorizontalIcon

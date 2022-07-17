@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createProject, createProjectKey } from "../../../core/api/api";
 import Alert from "../../../core/components/Alert";
@@ -34,6 +34,19 @@ export default function CreateProjectForm() {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    const listener = (event) => {
+      if (event.code === "Enter" || event.code === "NumpadEnter") {
+        event.preventDefault();
+        handleSubmit();
+      }
+    };
+    document.addEventListener("keydown", listener);
+    return () => {
+      document.removeEventListener("keydown", listener);
+    };
+  }, [projectName, description, keyDescription]);
 
   return (
     <>
@@ -78,8 +91,14 @@ export default function CreateProjectForm() {
                     id="projectname"
                     autoComplete="projectname"
                     placeholder="my-fruity-fruit-shop"
-                    onChange={(e) => setProjectName(e.target.value)}
-                    className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+                    onChange={(e) => {
+                      const key = e.target.value
+                        .toLowerCase()
+                        .replace(/\s/g, "-");
+                      setProjectName(key);
+                    }}
+                    value={projectName}
+                    className="flex-1 focus:ring-hanpurple-500 focus:border-hanpurple-500 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
                   />
                 </div>
               </div>
@@ -96,9 +115,10 @@ export default function CreateProjectForm() {
                     id="about"
                     name="about"
                     rows={3}
-                    placeholder="Selling fruit and vegtables..."
+                    placeholder="Selling fruit and vegetables..."
                     onChange={(e) => setDescription(e.target.value)}
-                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md"
+                    value={description}
+                    className="shadow-sm focus:ring-hanpurple-500 focus:border-hanpurple-500 block w-full sm:text-sm border border-gray-300 rounded-md"
                     defaultValue={""}
                   />
                 </div>
@@ -139,7 +159,8 @@ export default function CreateProjectForm() {
                     rows={3}
                     placeholder="Handling feature-toggles for our services in dev..."
                     onChange={(e) => setKeyDescription(e.target.value)}
-                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md"
+                    value={keyDescription}
+                    className="shadow-sm focus:ring-hanpurple-500 focus:border-hanpurple-500 block w-full sm:text-sm border border-gray-300 rounded-md"
                     defaultValue={""}
                   />
                 </div>
@@ -157,14 +178,14 @@ export default function CreateProjectForm() {
             <Link to="/projects">
               <button
                 type="button"
-                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-hanpurple-500"
               >
                 Cancel
               </button>
             </Link>
             <button
               type="button"
-              className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-hanpurple-700 hover:bg-hanpurple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-hanpurple-500"
               onClick={handleSubmit}
             >
               {loading && <ButtonLoadingSpinner />}

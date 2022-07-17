@@ -1,5 +1,5 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment, useContext } from "react";
+import { Fragment, useContext, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { SwitchHorizontalIcon, XIcon } from "@heroicons/react/outline";
 import ToggleDetails from "./ToggleDetails";
@@ -17,12 +17,18 @@ export default function ToggleSidebar({ open, setOpen }) {
   const handleModalClose = async () => {
     const response = await getToggles(apiKey);
     addFetchedToggles(response);
-    selectToggle(response.find((t) => t.key === toggle.key));
+    selectToggle(response.find((t) => t.key === toggle?.key));
     setOpen(false);
   };
 
+  useEffect(() => {
+    if (!toggle && open) {
+      handleModalClose();
+    }
+  }, [toggle]);
+
   return (
-    <Transition.Root show={open} as={Fragment}>
+    <Transition.Root show={open && !!selectToggle} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={handleModalClose}>
         <Transition.Child
           as={Fragment}
@@ -61,7 +67,7 @@ export default function ToggleSidebar({ open, setOpen }) {
                         <div className="ml-3 flex h-7 items-center">
                           <button
                             type="button"
-                            className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-hanpurple-500 focus:ring-offset-2"
                             onClick={handleModalClose}
                           >
                             <span className="sr-only">Close panel</span>

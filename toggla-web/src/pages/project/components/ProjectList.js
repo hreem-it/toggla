@@ -66,7 +66,7 @@ export default function ProjectList({ projects = [] }) {
             >
               <div className="px-4 py-4 sm:px-6">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-indigo-600 truncate capitalize">
+                  <p className="text-sm font-medium text-hanpurple-700 truncate">
                     {project.projectKey}
                   </p>
                   <div className="ml-2 flex-shrink-0 flex">
@@ -89,7 +89,7 @@ export default function ProjectList({ projects = [] }) {
                     <p>
                       Created{" "}
                       <time dateTime={project.createdAt}>
-                        {project.createdAt.split("T")[0] }
+                        {project.createdAt.split("T")[0]}
                       </time>
                     </p>
                   </div>

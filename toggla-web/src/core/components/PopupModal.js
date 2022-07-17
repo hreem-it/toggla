@@ -3,7 +3,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import {
   CheckIcon,
   KeyIcon,
-  QuestionMarkCircleIcon,
 } from "@heroicons/react/outline";
 import { Link } from "react-router-dom";
 import ButtonLoadingSpinner from "./ButtonLoadingSpinner";
@@ -92,7 +91,7 @@ export default function PopupModal({
                       autoComplete="X-api-secret"
                       onChange={(e) => setInput(e.target.value)}
                       placeholder="00000000-0000-0000-0000-000000000000"
-                      className="flex-1 text-center focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+                      className="flex-1 text-center focus:ring-hanpurple-500 focus:border-hanpurple-500 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
                     />
                   </div>
                 )}
@@ -105,7 +104,7 @@ export default function PopupModal({
                       autoComplete="X-api-secret"
                       value={apiKey.replace(/['"]+/g, "")}
                       placeholder="00000000-0000-0000-0000-000000000000"
-                      className="flex-1 text-center focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+                      className="flex-1 text-center focus:ring-hanpurple-500 focus:border-hanpurple-500 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
                       disabled
                     />
                   </div>
@@ -114,7 +113,7 @@ export default function PopupModal({
                   {preRouteSubmitCheck ? (
                     <button
                       type="button"
-                      className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
+                      className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-hanpurple-700 text-base font-medium text-white hover:bg-hanpurple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-hanpurple-500 sm:text-sm"
                       onClick={() => {
                         preRouteSubmitCheck(input);
                       }}
@@ -126,7 +125,7 @@ export default function PopupModal({
                     <Link to={navigateTo}>
                       <button
                         type="button"
-                        className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
+                        className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-hanpurple-700 text-base font-medium text-white hover:bg-hanpurple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-hanpurple-500 sm:text-sm"
                         onClick={() => {
                           setOpen(false);
                         }}

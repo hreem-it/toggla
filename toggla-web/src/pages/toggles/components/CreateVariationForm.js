@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { createToggleVariation, getToggles } from "../../../core/api/api";
 import Alert from "../../../core/components/Alert";
 import ButtonLoadingSpinner from "../../../core/components/ButtonLoadingSpinner";
@@ -37,6 +37,19 @@ export default function CreateVariationForm({ setOpen }) {
     setLoading(false);
   };
 
+  useEffect(() => {
+    const listener = (event) => {
+      if (event.code === "Enter" || event.code === "NumpadEnter") {
+        event.preventDefault();
+        handleSubmit();
+      }
+    };
+    document.addEventListener("keydown", listener);
+    return () => {
+      document.removeEventListener("keydown", listener);
+    };
+  }, [variationKey, variationDescription]);
+
   return (
     <>
       <form className="space-y-8 divide-y divide-gray-200">
@@ -64,8 +77,14 @@ export default function CreateVariationForm({ setOpen }) {
                     name="key"
                     type="text"
                     placeholder="my-toggle-variation-1"
-                    onChange={(e) => setVariationKey(e.target.value)}
-                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md"
+                    onChange={(e) => {
+                      const key = e.target.value
+                        .toLowerCase()
+                        .replace(/\s/g, "-");
+                      setVariationKey(key);
+                    }}
+                    value={variationKey}
+                    className="shadow-sm focus:ring-hanpurple-500 focus:border-hanpurple-500 block w-full sm:text-sm border border-gray-300 rounded-md"
                     defaultValue={""}
                   />
                 </div>
@@ -82,7 +101,8 @@ export default function CreateVariationForm({ setOpen }) {
                     rows={3}
                     placeholder="Enable parallel processing for new feature..."
                     onChange={(e) => setVariationDescription(e.target.value)}
-                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md"
+                    value={variationDescription}
+                    className="shadow-sm focus:ring-hanpurple-500 focus:border-hanpurple-500 block w-full sm:text-sm border border-gray-300 rounded-md"
                     defaultValue={""}
                   />
                 </div>
@@ -101,13 +121,13 @@ export default function CreateVariationForm({ setOpen }) {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-hanpurple-500"
             >
               Cancel
             </button>
             <button
               type="button"
-              className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-hanpurple-700 hover:bg-hanpurple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-hanpurple-500"
               onClick={handleSubmit}
             >
               {loading && <ButtonLoadingSpinner />}

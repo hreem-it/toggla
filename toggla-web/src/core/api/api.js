@@ -9,6 +9,22 @@ export const createProject = async (payload) => {
     throw new Error("Project with this project name already exists!");
 };
 
+export const deleteProject = async ({ projectKey, apiSecret }) => {
+  const response = await fetch(
+    `${process.env.REACT_APP_BE_API_URL}/projects/${projectKey}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "X-api-secret": apiSecret,
+      },
+    }
+  );
+
+  if (response.status === 400)
+    throw new Error("Project with this project name already exists!");
+};
+
 export const createProjectKey = async (projectKey, payload) => {
   const response = await fetch(
     `${process.env.REACT_APP_BE_API_URL}/projects/${projectKey}/apikey`,
@@ -34,6 +50,19 @@ export const createToggle = async (apiSecret, payload) => {
 
   if (response.status === 400)
     throw new Error("Toggle with this key already exists");
+};
+
+export const deleteToggle = async ({ apiSecret, toggleKey }) => {
+  const response = await fetch(
+    `${process.env.REACT_APP_BE_API_URL}/toggles/${toggleKey}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "X-api-secret": apiSecret,
+      },
+    }
+  );
 };
 
 export const createToggleVariation = async (apiSecret, toggleKey, payload) => {

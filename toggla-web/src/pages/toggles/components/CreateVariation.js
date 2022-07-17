@@ -1,7 +1,7 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { CheckIcon, SwitchHorizontalIcon } from "@heroicons/react/outline";
+import { SwitchHorizontalIcon } from "@heroicons/react/outline";
 import CreateVariationForm from "./CreateVariationForm";
 
 export default function CreateVariation({ open, setOpen }) {
@@ -64,7 +64,7 @@ export default function CreateVariation({ open, setOpen }) {
                     </div>
                   </div>
                 </div>
-                <CreateVariationForm setOpen={setOpen}/>
+                <CreateVariationForm setOpen={setOpen} />
               </Dialog.Panel>
             </Transition.Child>
           </div>

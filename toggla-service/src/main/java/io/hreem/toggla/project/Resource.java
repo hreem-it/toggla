@@ -4,6 +4,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -18,6 +19,7 @@ import javax.ws.rs.core.UriInfo;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import io.hreem.toggla.common.repository.ObjectNotFoundException;
 import io.hreem.toggla.project.model.dto.CreateApiKeyRequest;
 import io.hreem.toggla.project.model.dto.CreateProjectRequest;
 
@@ -51,6 +53,18 @@ public class Resource {
     @Path("/verifykey")
     public Response getProjectKeyByApiKey(@HeaderParam("X-api-secret") String apiKey) {
         final var projectKey = projectService.getProjectKeyFromApiKey(apiKey);
+        return Response.ok(projectKey).build();
+    }
+
+    @DELETE
+    @Path("/{projectKey}")
+    public Response deleteProjectByProjectKey(@HeaderParam("X-api-secret") String apiKey,
+            @PathParam("projectKey") String projectKey) throws ObjectNotFoundException {
+        final var keyMappedToAPIKey = projectService.getProjectKeyFromApiKey(apiKey);
+        if (!keyMappedToAPIKey.equals(projectKey))
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+
+        projectService.deleteProject(projectKey);
         return Response.ok(projectKey).build();
     }
 
