@@ -19,10 +19,10 @@ export default function ToggleDetails() {
   const [toggleDeletionModalOpen, setToggleDeletionModalOpen] = useState(false);
 
   const handleToggleVariant = async (variantKey) => {
-    await toggleToggleVariant(apiKey, toggle?.key, variantKey);
+    await toggleToggleVariant(apiKey, toggle?.toggleKey, variantKey);
     const response = await getToggles(apiKey);
     addFetchedToggles(response);
-    selectToggle(response.find((t) => t.key === toggle?.key));
+    selectToggle(response.find((t) => t.toggleKey === toggle?.toggleKey));
   };
 
   return (
@@ -33,14 +33,17 @@ export default function ToggleDetails() {
             Toggle Status url:
           </h3>
           <p className="mt-1 max-w-2xl text-sm text-gray-500">
-            GET {process.env.REACT_APP_BE_API_URL}/toggles/{toggle?.key}/status
+            GET {process.env.REACT_APP_BE_API_URL}/toggles/{toggle?.toggleKey}
+            /status
           </p>
         </div>
         <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
           <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
             <div className="sm:col-span-1">
               <dt className="text-sm font-medium text-gray-500">Toggle key</dt>
-              <dd className="mt-1 text-sm text-gray-900">{toggle?.key}</dd>
+              <dd className="mt-1 text-sm text-gray-900">
+                {toggle?.toggleKey}
+              </dd>
             </div>
             <div className="sm:col-span-1">
               <dt className="text-sm font-medium text-gray-500">Project</dt>
@@ -84,7 +87,10 @@ export default function ToggleDetails() {
                       (variation) => variation.variationKey !== "default"
                     )
                     .map((variation) => (
-                      <li className="pl-3 pr-4 py-3 text-sm">
+                      <li
+                        className="pl-3 pr-4 py-3 text-sm"
+                        key={variation.variationKey}
+                      >
                         <div className="flex-row-reverse items-center justify-between">
                           <div className="flex items-center justify-between">
                             <div className="w-0 flex-1 flex items-center">
@@ -111,7 +117,8 @@ export default function ToggleDetails() {
                                 <p className="mt-1 max-w-2xl text-sm text-gray-500">
                                   GET {process.env.REACT_APP_BE_API_URL}
                                   /toggles/
-                                  {toggle?.key}/{variation.variationKey}/status
+                                  {toggle?.toggleKey}/{variation.variationKey}
+                                  /status
                                 </p>
                               </span>
                             </div>

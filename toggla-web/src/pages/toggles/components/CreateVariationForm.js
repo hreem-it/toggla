@@ -22,14 +22,14 @@ export default function CreateVariationForm({ setOpen }) {
     setLoading(true);
     setError(undefined);
     try {
-      await createToggleVariation(apiKey, selectedToggle.key, {
+      await createToggleVariation(apiKey, selectedToggle?.toggleKey, {
         variationKey: variationKey,
         description: variationDescription,
         enabled: false,
       });
       const response = await getToggles(apiKey);
       addFetchedToggles(response);
-      selectToggle(response.find((t) => t.key === selectedToggle.key));
+      selectToggle(response.find((t) => t.toggleKey === selectedToggle?.toggleKey));
       setOpen(false);
     } catch (e) {
       setError(e.message);
@@ -57,7 +57,7 @@ export default function CreateVariationForm({ setOpen }) {
           <div className="pt-6">
             <div>
               <h3 className="text-lg leading-6 font-medium text-gray-900">
-                Create a new Variation for {selectedToggle.key}
+                Create a new Variation for {selectedToggle.toggleKey}
                 {"  "}
                 <EnvironmentChip envOverride={environment} />
               </h3>

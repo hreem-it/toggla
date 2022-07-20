@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { PlusIcon } from "@heroicons/react/solid";
 import ProjectContext from "../../ProjectContext";
@@ -28,7 +27,8 @@ const team = [
 const SettingsPage = () => {
   const [openProjectDeletionModal, setOpenProjectDeletionModal] =
     useState(false);
-  const { selectedProject } = useContext(ProjectContext);
+  const { selectedProject, setCurrentNavigation } = useContext(ProjectContext);
+  setCurrentNavigation("settings");
 
   return (
     <>

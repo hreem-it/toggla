@@ -14,7 +14,7 @@ import io.hreem.toggla.common.repository.DataTypeQualifiers;
 public class RepositoryProducer {
 
     @Inject
-    @ConfigProperty(name = "toggla.toggle.repository.type", defaultValue = "redis")
+    @ConfigProperty(name = "toggla.repository.type", defaultValue = "redis")
     String repositoryType;
 
     @Inject

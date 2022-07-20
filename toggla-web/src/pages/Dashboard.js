@@ -9,6 +9,7 @@ import {
   SwitchHorizontalIcon,
   XIcon,
   CogIcon,
+  ChartBarIcon,
 } from "@heroicons/react/outline";
 import { Link, Navigate, Route, Routes } from "react-router-dom";
 import ProjectPage from "./project";
@@ -28,7 +29,7 @@ function classNames(...classes) {
 
 export default function Example() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { selectedProject } = useContext(ProjectContext);
+  const { selectedProject, currentNavigation } = useContext(ProjectContext);
   let location = window.location.pathname.split("/");
 
   const navigation = [
@@ -36,7 +37,7 @@ export default function Example() {
       name: "Projects",
       href: "/projects",
       icon: FolderIcon,
-      current: location[location.length - 1].includes("projects"),
+      current: currentNavigation === "projects",
       indent: false,
       external: false,
     },
@@ -44,7 +45,7 @@ export default function Example() {
       name: "Toggles",
       href: `/projects/${selectedProject?.projectKey}/toggles`,
       icon: SwitchHorizontalIcon,
-      current: location[location.length - 1].includes("toggles"),
+      current: currentNavigation === "toggles",
       indent: true,
       external: false,
     },
@@ -52,22 +53,23 @@ export default function Example() {
       name: "API Keys",
       href: `/projects/${selectedProject?.projectKey}/keys`,
       icon: KeyIcon,
-      current: location[location.length - 1].includes("keys"),
+      current: currentNavigation === "keys",
       indent: true,
       external: false,
     },
-    // {
-    //   name: "Reports",
-    //   href: `/projects/${selectedProject?.projectKey}/reports`,
-    //   icon: ChartBarIcon,
-    //   current: location[location.length - 1].includes("reports"),
-    //   indent: true,
-    // },
+    {
+      name: "Reports",
+      href: `/projects/${selectedProject?.projectKey}/reports`,
+      icon: ChartBarIcon,
+      current: currentNavigation === "reports",
+      indent: true,
+      disabled: true,
+    },
     {
       name: "Settings",
       href: `/projects/${selectedProject?.projectKey}/settings`,
       icon: CogIcon,
-      current: location[location.length - 1].includes("settings"),
+      current: currentNavigation === "settings",
       indent: true,
     },
   ];
@@ -152,6 +154,7 @@ export default function Example() {
                           key={item.name}
                           href={item.href}
                           className={classNames(
+                            item.disabled ? "blur-xs" : "",
                             item.current
                               ? "bg-gray-100 text-gray-900"
                               : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
@@ -204,6 +207,7 @@ export default function Example() {
                       to={item.href}
                       replace={item.replace}
                       className={classNames(
+                        item.disabled ? "blur-xs" : "",
                         item.current
                           ? "bg-gray-100 text-gray-900"
                           : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",

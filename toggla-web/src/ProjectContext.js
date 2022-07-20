@@ -3,6 +3,7 @@ import { createContext, useState } from "react";
 const ProjectContext = createContext();
 
 export function ProjectProvider({ children }) {
+  const [currentNavigation, setCurrentNavigation] = useState("");
   const [selectedProject, setSelectedProject] = useState(undefined);
   const [selectedToggle, setSelectedToggle] = useState(undefined);
   const [apiKey, setApiKey] = useState(undefined);
@@ -47,6 +48,9 @@ export function ProjectProvider({ children }) {
         // Toggles
         fetchedToggles,
         addFetchedToggles,
+        // Navigation
+        currentNavigation,
+        setCurrentNavigation,
       }}
     >
       {children}

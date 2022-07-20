@@ -17,7 +17,7 @@ export default function ToggleSidebar({ open, setOpen }) {
   const handleModalClose = async () => {
     const response = await getToggles(apiKey);
     addFetchedToggles(response);
-    selectToggle(response.find((t) => t.key === toggle?.key));
+    selectToggle(response.find((t) => t.toggleKey === toggle?.toggleKey));
     setOpen(false);
   };
 

@@ -1,6 +1,10 @@
+import { useContext } from "react";
 import TogglesTable from "./components/TogglesTable";
+import ProjectContext from "../../ProjectContext";
 
 const TogglesPage = () => {
+  const { setCurrentNavigation } = useContext(ProjectContext);
+  setCurrentNavigation("toggles");
   return (
     <>
       <div className="px-4 sm:px-6 md:px-0">

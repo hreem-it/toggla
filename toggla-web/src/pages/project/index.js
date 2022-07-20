@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getProjects } from "../../core/api/api";
+import ProjectContext from "../../ProjectContext";
 import CreateProjectCallToAction from "./components/CreateProjectCallToAction";
 import ProjectList from "./components/ProjectList";
 
 const ProjectPage = () => {
+  const { setCurrentNavigation } = useContext(ProjectContext);
+  setCurrentNavigation("projects");
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {

@@ -200,29 +200,33 @@ public class Service {
     public void createNewToggle(NewToggleRequest request) throws JsonProcessingException {
         // Create a new toggle configuration
         final var projectKey = context.getProjectKey();
-        final var newToggle = Toggle.builder()
-                .key(request.key())
-                .description(request.description())
-                .createdAt(new Date())
-                .updatedAt(new Date())
-                .variations(List.of(
-                        Variation.builder()
-                                .variationKey("default")
-                                .enabled(request.enabled())
-                                .createdAt(new Date())
-                                .updatedAt(new Date())
-                                .build()))
-                .build();
+        final var environment = Environment.valueOf(context.getEnvironment());
 
-        // Save the toggle configuration to Redis, one for each environment
+        // Save the toggle configuration , one for each environment
         for (var env : Environment.values()) {
             // Check that no toggle with the same key already exists
-            final var id = util.constructKey(projectKey, env.toString(), newToggle.key());
+            final var id = util.constructKey(projectKey, env.toString(), request.key());
 
             if (repository.exists(id))
-                throw new BadRequestException("A toggle with the key " + newToggle.key() + " already exists");
+                throw new BadRequestException("A toggle with the key " + request.key() + " already exists");
 
-            // Save the toggle configuration to Redis, one for each environment
+            // Save the toggle configuration , one for each environment
+            final var newToggle = Toggle.builder()
+                    .id(id)
+                    .toggleKey(request.key())
+                    .description(request.description())
+                    .projectKey(projectKey)
+                    .environment(environment)
+                    .createdAt(new Date())
+                    .updatedAt(new Date())
+                    .variations(List.of(
+                            Variation.builder()
+                                    .variationKey("default")
+                                    .enabled(request.enabled())
+                                    .createdAt(new Date())
+                                    .updatedAt(new Date())
+                                    .build()))
+                    .build();
             repository.create(id, newToggle);
         }
     }
@@ -260,7 +264,7 @@ public class Service {
      */
     @CacheResult(cacheName = "toggle")
     public Toggle getToggle(@CacheKey String toggleKey, @CacheKey String environment) {
-        // Get the toggle configuration from Redis
+        // Get the toggle configuration
         final var projectKey = context.getProjectKey();
         final var id = util.constructKey(projectKey, environment, toggleKey);
         Log.info(id);
@@ -280,7 +284,7 @@ public class Service {
     public List<Toggle> getAllToggles() {
         final var projectKey = context.getProjectKey();
         final var environment = context.getEnvironment();
-        final var idPattern = util.constructKey(projectKey, environment, "*");
+        final var idPattern = util.constructKey(projectKey, environment);
 
         return cache.get(idPattern, type -> {
             final var keys = repository.getAllKeysMatching(idPattern);

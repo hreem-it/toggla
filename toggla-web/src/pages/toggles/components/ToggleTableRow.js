@@ -25,7 +25,7 @@ const ToggleTableRow = ({ toggle }) => {
   };
 
   const handleToggle = async () => {
-    await toggleToggle(apiKey, toggle.key);
+    await toggleToggle(apiKey, toggle.toggleKey);
     const response = await getToggles(apiKey);
     addFetchedToggles(response);
   };
@@ -33,7 +33,7 @@ const ToggleTableRow = ({ toggle }) => {
   return (
     <>
       <ToggleSidebar
-        key={toggle.key}
+        key={toggle.toggleKey}
         open={sidebarOpen}
         setOpen={setSidebarOpen}
       />
@@ -50,7 +50,9 @@ const ToggleTableRow = ({ toggle }) => {
               />
             </div>
             <div className="ml-4">
-              <div className="font-medium text-gray-900">{toggle.key}</div>
+              <div className="font-medium text-gray-900">
+                {toggle.toggleKey}
+              </div>
               <div className="text-gray-500 max-w-[35ch] overflow-hidden text-ellipsis">
                 {toggle.description}
               </div>

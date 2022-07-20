@@ -13,7 +13,7 @@ export default function ToggleDeletionModal({ open, setOpen }) {
 
   const handleProjectDeletion = async () => {
     await deleteToggle({
-      toggleKey: selectedToggle.key,
+      toggleKey: selectedToggle.toggleKey,
       apiSecret: apiKey,
     });
     selectToggle(undefined);

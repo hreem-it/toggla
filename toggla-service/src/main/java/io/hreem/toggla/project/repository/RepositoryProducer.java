@@ -1,13 +1,12 @@
 package io.hreem.toggla.project.repository;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.literal.NamedLiteral;
 import javax.inject.Inject;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import io.hreem.toggla.common.repository.Repository;
+import io.hreem.toggla.project.model.ApiKey;
 import io.hreem.toggla.project.model.Project;
 import io.hreem.toggla.common.repository.DBTypeQualifiers;
 import io.hreem.toggla.common.repository.DataTypeQualifiers;
@@ -16,7 +15,7 @@ import io.hreem.toggla.common.repository.DataTypeQualifiers;
 public class RepositoryProducer {
 
     @Inject
-    @ConfigProperty(name = "toggla.toggle.repository.type", defaultValue = "redis")
+    @ConfigProperty(name = "toggla.repository.type", defaultValue = "redis")
     String repositoryType;
 
     @Inject
@@ -32,12 +31,12 @@ public class RepositoryProducer {
     @Inject
     @DBTypeQualifiers.Redis
     @DataTypeQualifiers.APIKey
-    Repository<String, String> redisKeyRepository;
+    Repository<String, ApiKey> redisKeyRepository;
 
     @Inject
     @DBTypeQualifiers.DynamoDB
     @DataTypeQualifiers.APIKey
-    Repository<String, String> ddbKeyRepository;
+    Repository<String, ApiKey> ddbKeyRepository;
 
     public Repository<String, Project> getProjectRepository() {
         return switch (repositoryType) {
@@ -48,7 +47,7 @@ public class RepositoryProducer {
         };
     }
 
-    public Repository<String, String> getKeyRepository() {
+    public Repository<String, ApiKey> getKeyRepository() {
         return switch (repositoryType) {
             case "redis" -> redisKeyRepository;
             case "dynamodb" -> ddbKeyRepository;
