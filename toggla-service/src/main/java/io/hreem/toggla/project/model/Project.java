@@ -12,7 +12,12 @@ import lombok.Builder;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 @RegisterForReflection
-public record Project(String projectKey, String description, List<ApiKey> apiKeys, Date createdAt, Date updatedAt) {
+public record Project(
+                String projectKey,
+                String description,
+                List<ApiKey> apiKeys,
+                Date createdAt,
+                Date updatedAt) {
 
         private static final Util util = new Util();
 

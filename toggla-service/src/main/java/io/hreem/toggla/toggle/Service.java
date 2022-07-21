@@ -267,7 +267,6 @@ public class Service {
         // Get the toggle configuration
         final var projectKey = context.getProjectKey();
         final var id = util.constructKey(projectKey, environment, toggleKey);
-        Log.info(id);
         try {
             return repository.get(id);
         } catch (Exception e) {
@@ -284,7 +283,7 @@ public class Service {
     public List<Toggle> getAllToggles() {
         final var projectKey = context.getProjectKey();
         final var environment = context.getEnvironment();
-        final var idPattern = util.constructKey(projectKey, environment);
+        final var idPattern = util.constructKey(projectKey, environment, "*");
 
         return cache.get(idPattern, type -> {
             final var keys = repository.getAllKeysMatching(idPattern);

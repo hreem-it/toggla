@@ -11,7 +11,12 @@ import lombok.Builder;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 @RegisterForReflection
-public record ApiKey(UUID apiKey, String description, Environment env, String projectKey, Date createdAt,
+public record ApiKey(
+        UUID apiKey,
+        String description,
+        Environment env,
+        String projectKey,
+        Date createdAt,
         Date updatedAt) {
 
     private static final Util util = new Util();
