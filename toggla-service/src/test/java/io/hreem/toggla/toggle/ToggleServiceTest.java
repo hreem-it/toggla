@@ -247,7 +247,7 @@ public class ToggleServiceTest {
 
                 // Then
                 assertThat(response).isNotNull();
-                assertThat(response.key()).isEqualTo(mockToggle.key());
+                assertThat(response.toggleKey()).isEqualTo(mockToggle.key());
                 assertThat(response.variations().get(0).variationKey()).isEqualTo("default");
                 assertThat(response.variations().get(0).enabled()).isEqualTo(true);
         }
@@ -288,11 +288,11 @@ public class ToggleServiceTest {
                 assertThat(response).isNotNull();
                 assertThat(response).hasSize(2);
 
-                response.sort(Comparator.comparing(Toggle::key));
-                assertThat(response.get(0).key()).isEqualTo("mock-key");
+                response.sort(Comparator.comparing(Toggle::toggleKey));
+                assertThat(response.get(0).toggleKey()).isEqualTo("mock-key");
                 assertThat(response.get(0).variations().get(0).variationKey()).isEqualTo("default");
                 assertThat(response.get(0).variations().get(0).enabled()).isEqualTo(true);
-                assertThat(response.get(1).key()).isEqualTo("mock-key-2");
+                assertThat(response.get(1).toggleKey()).isEqualTo("mock-key-2");
                 assertThat(response.get(1).variations().get(0).variationKey()).isEqualTo("default");
                 assertThat(response.get(1).variations().get(0).enabled()).isEqualTo(false);
         }
