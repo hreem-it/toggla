@@ -34,9 +34,10 @@ public class DynamoDBRepository implements Repository<String, Toggle> {
         final var requestBuilder = ScanRequest.builder()
                 .tableName(TABLE_NAME);
 
-        if (!pattern.equals("*") && !pattern.isEmpty()) {
+        if (!pattern.isEmpty()) {
+            final var expr = pattern.split("\\*")[0];
             requestBuilder.filterExpression("contains(id, :pattern)")
-                    .expressionAttributeValues(Map.of(":pattern", AttributeValue.builder().s(pattern).build()));
+                    .expressionAttributeValues(Map.of(":pattern", AttributeValue.builder().s(expr).build()));
         }
 
         return dynamoDB.scanPaginator(requestBuilder.build()).items().stream()

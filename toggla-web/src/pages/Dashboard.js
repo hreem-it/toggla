@@ -76,7 +76,7 @@ export default function Example() {
 
   const apiDocs = {
     name: "API Docs",
-    href: `${process.env.REACT_APP_BE_API_URL}/openapi/ui`,
+    href: `${process.env.REACT_APP_BE_API_URL.split("api")[0]}openapi/ui`,
     icon: DocumentIcon,
     current: false,
     indent: false,
