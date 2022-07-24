@@ -45,6 +45,7 @@ Resources:
       KeySchema:
         - AttributeName: apiKey
           KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
       Tags:
         - Key: "app"
           Value: "toggla"
@@ -63,6 +64,7 @@ Resources:
       KeySchema:
         - AttributeName: projectKey
           KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
       Tags:
         - Key: "app"
           Value: "toggla"
@@ -81,6 +83,7 @@ Resources:
       KeySchema:
         - AttributeName: id
           KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
       Tags:
         - Key: "app"
           Value: "toggla"
