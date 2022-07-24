@@ -27,3 +27,36 @@ Resources:
       Events:
         HttpApiEvent:
           Type: HttpApi
+
+  TogglaKeys:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: toggla-keys
+      AttributeDefinitions:
+        - AttributeName: apiKey
+          AttributeType: S
+      KeySchema:
+        - AttributeName: apiKey
+          KeyType: HASH
+
+  TogglaProjects:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: toggla-projects
+      AttributeDefinitions:
+        - AttributeName: projectKey
+          AttributeType: S
+      KeySchema:
+        - AttributeName: projectKey
+          KeyType: HASH
+
+  TogglaToggles:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: toggla-toggles
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
