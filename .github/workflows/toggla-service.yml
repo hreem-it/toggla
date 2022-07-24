@@ -61,7 +61,7 @@ jobs:
             --no-confirm-changeset \
             --no-fail-on-empty-changeset \
             -t deployment/aws/sam.native.yaml \
-            --stack-name toggla-${{matrix-region}} \
+            --stack-name toggla-${{matrix.region}} \
             --s3-bucket artifacts-gamma \
             --capabilities CAPABILITY_IAM
       - name: optimize
