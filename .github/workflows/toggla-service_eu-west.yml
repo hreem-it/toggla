@@ -73,18 +73,10 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - uses: uraimo/run-on-arch-action@v2
-        name: MVN Package Native
-        id: runcmd
-        with:
-          arch: armv7
-          distro: ubuntu18.04
-          githubToken: ${{ secrets.PAT }}
-
-          # Set an output parameter `uname` for use in subsequent steps
-          run: |
-            cd toggla-service
-            $MVN package -Pnative -DskipTests -Dquarkus.native.container-build=true
+      # Consider building on ARM instead
+      - name: mvn package -Pnative -DskipTests -Dquarkus.native.container-build=true
+        working-directory: toggla-service
+        run: $MVN package -Pnative -DskipTests -Dquarkus.native.container-build=true
       - name: sam deploy
         run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset -t deployment/aws/sam.native.yaml --stack-name toggla --s3-bucket artifacts-gamma --capabilities CAPABILITY_IAM
         
