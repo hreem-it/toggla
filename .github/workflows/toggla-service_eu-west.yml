@@ -24,15 +24,15 @@ jobs:
           java-version: "17"
           distribution: "adopt"
       - name: GraalVM 22.1.0
-        uses: ayltai/setup-graalvm@v1
+        uses: graalvm/setup-graalvm@v1
         with:
           java-version: 17
-          graalvm-version: 22.1.0
-          native-image: true
+          version: 22.1.0
+          native-image-musl: true
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.4.2
       - name: cache ~/.m2
-        uses: actions/cache@v2
+        uses: actions/cache@v3.0.5
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -62,9 +62,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.4.2
       - name: cache ~/.m2
-        uses: actions/cache@v2
+        uses: actions/cache@v3.0.5
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
