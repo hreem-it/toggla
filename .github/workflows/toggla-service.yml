@@ -96,8 +96,8 @@ jobs:
       - name: optimize
         run: |
           npx lumigo-cli powertune-lambda \
-            -i 150 -n toggla-service_${{matrix.region}} \
-            -s cost -v 256,512,1024 --parallelInvocation \
+            -i 50 -n toggla-service_${{matrix.region}} \
+            -s cost -v 256,512,1024,1500 --parallelInvocation \
             -f ./deployment/aws/tuning/request-get-toggle.json \
             --autoOptimize \
             -z -r ${{matrix.region}}
