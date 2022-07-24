@@ -11,7 +11,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Architectures:
-        - arm64
+        - x86
       Handler: not.used.in.provided.runtime
       Runtime: provided.al2
       CodeUri: ../../toggla-service/target/function.zip
