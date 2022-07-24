@@ -27,10 +27,3 @@ Resources:
       Events:
         HttpApiEvent:
           Type: HttpApi
-
-Outputs:
-  TogglaApi:
-    Description: URL for application
-    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/"
-    Export:
-      Name: TogglaApi
