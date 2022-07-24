@@ -43,7 +43,7 @@ jobs:
   deploy:
     strategy:
       matrix:
-        region: [eu-west-1, eu-north-1, me-south-1]
+        region: [eu-west-1]
     if: github.ref == 'refs/heads/master'
     needs: test
     runs-on: ubuntu-latest
@@ -64,7 +64,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{matrix.region}}
+          aws-region: ${{ matrix.region }}
       - name: checkout
         uses: actions/checkout@v2.4.2
         with:
