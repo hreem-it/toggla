@@ -1,10 +1,7 @@
 {
   "version": "2.0",
   "routeKey": "$default",
-  "rawPath": "/api/v1/toggles/hello-this-is-a-toggle/status",
-  "headers": {
-    "X-api-secret": "f740984b-aa69-425f-bb03-1ef407707822"
-  },
+  "rawPath": "/api/v1/projects",
   "requestContext": {
     "accountId": "123456789012",
     "apiId": "api-id",
@@ -33,7 +30,7 @@
     "domainPrefix": "id",
     "http": {
       "method": "GET",
-      "path": "/api/v1/toggles/hello-this-is-a-toggle/status",
+      "path": "/api/v1/projects",
       "protocol": "HTTP/1.1",
       "sourceIp": "192.168.0.1/32",
       "userAgent": "agent"
