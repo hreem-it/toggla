@@ -8,6 +8,7 @@ Globals:
 
 Resources:
   Toggla:
+    FunctionName: !Sub toggla-service_${AWS::Region}
     Type: AWS::Serverless::Function
     Properties:
       Architectures:
@@ -15,7 +16,7 @@ Resources:
       Handler: not.used.in.provided.runtime
       Runtime: provided.al2
       CodeUri: ../../toggla-service/target/function.zip
-      MemorySize: 512
+      MemorySize: 256
       Policies:
         - AWSLambdaBasicExecutionRole
         - AmazonDynamoDBFullAccess

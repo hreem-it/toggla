@@ -43,7 +43,7 @@ jobs:
         working-directory: toggla-service
         run: $MVN clean verify
   # Image push happens before native tests when running 'mvn clean verify -Pnative -Dquarkus.container-image.push=true', so decided to split.
-  deploy-native:
+  deploy_eu-west:
     if: github.ref == 'refs/heads/master'
     needs: test
     runs-on: ubuntu-latest
@@ -58,6 +58,8 @@ jobs:
           logout: true
       - name: Setup AWS SAM CLI
         uses: aws-actions/setup-sam@v2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.4.1
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -76,6 +78,26 @@ jobs:
       # Consider building on ARM instead
       - name: mvn package -Pnative -DskipTests -Dquarkus.native.container-build=true
         working-directory: toggla-service
-        run: $MVN package -Pnative -DskipTests -Dquarkus.native.container-build=true -Dquarkus.profile=aws
+        run: |
+          $MVN package \
+            -Pnative \
+            -DskipTests \
+            -Dquarkus.native.container-build=true \
+            -Dquarkus.profile=aws
       - name: sam deploy
-        run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset -t deployment/aws/sam.native.yaml --stack-name toggla --s3-bucket artifacts-gamma --capabilities CAPABILITY_IAM
+        run: |
+          sam deploy \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            -t deployment/aws/sam.native.yaml \
+            --stack-name toggla_eu-west \
+            --s3-bucket artifacts-gamma \
+            --capabilities CAPABILITY_IAM
+      - name: optimize
+        run: |
+          npx lumigo-cli powertune-lambda \
+            -i 150 -n toggla-service_eu-west-1 \
+            -s cost -v 256,512,1024 --parallelInvocation \
+            -f ./deployment/aws/tuning/request-get-toggle.json \
+            --autoOptimize \
+            -z -r eu-west-1
