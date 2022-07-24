@@ -27,13 +27,6 @@ Resources:
       Events:
         HttpApiEvent:
           Type: HttpApi
-      Tags:
-        - Key: "app"
-          Value: "toggla"
-        - Key: "region"
-          Value: !Sub ${AWS::Region}
-        - Key: "environment"
-          Value: "test"
 
   TogglaKeys:
     Type: AWS::DynamoDB::Table
@@ -46,13 +39,6 @@ Resources:
         - AttributeName: apiKey
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
-      Tags:
-        - Key: "app"
-          Value: "toggla"
-        - Key: "region"
-          Value: !Sub ${AWS::Region}
-        - Key: "environment"
-          Value: "test"
 
   TogglaProjects:
     Type: AWS::DynamoDB::Table
@@ -65,13 +51,6 @@ Resources:
         - AttributeName: projectKey
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
-      Tags:
-        - Key: "app"
-          Value: "toggla"
-        - Key: "region"
-          Value: !Sub ${AWS::Region}
-        - Key: "environment"
-          Value: "test"
 
   TogglaToggles:
     Type: AWS::DynamoDB::Table
@@ -84,10 +63,3 @@ Resources:
         - AttributeName: id
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
-      Tags:
-        - Key: "app"
-          Value: "toggla"
-        - Key: "region"
-          Value: !Sub ${AWS::Region}
-        - Key: "environment"
-          Value: "test"
