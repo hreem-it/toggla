@@ -8,9 +8,9 @@ Globals:
 
 Resources:
   Toggla:
-    FunctionName: !Sub toggla-service_${AWS::Region}
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub toggla-service_${AWS::Region}
       Architectures:
         - x86_64
       Handler: not.used.in.provided.runtime
@@ -24,6 +24,7 @@ Resources:
       Environment:
         Variables:
           DISABLE_SIGNAL_HANDLERS: true
+          QUARKUS_DYNAMODB_AWS_CREDENTIALS_TYPE: default
       Events:
         HttpApiEvent:
           Type: HttpApi
@@ -63,3 +64,10 @@ Resources:
         - AttributeName: id
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
+    Tags:
+      - Key: "app"
+        Value: "toggla"
+      - Key: "region"
+        Value: !Sub ${AWS::Region}
+      - Key: "environment"
+        Value: "test"
