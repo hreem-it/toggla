@@ -23,12 +23,6 @@ import io.hreem.toggla.toggle.model.Variation;
 import io.hreem.toggla.toggle.model.dto.AddToggleVariationRequest;
 import io.hreem.toggla.toggle.model.dto.NewToggleRequest;
 import io.hreem.toggla.toggle.repository.RepositoryProducer;
-import io.quarkus.cache.Cache;
-import io.quarkus.cache.CacheInvalidateAll;
-import io.quarkus.cache.CacheKey;
-import io.quarkus.cache.CacheName;
-import io.quarkus.cache.CacheResult;
-import io.quarkus.logging.Log;
 
 @RequestScoped
 public class Service {
@@ -38,10 +32,6 @@ public class Service {
 
     @Inject
     RequestContext context;
-
-    @Inject
-    @CacheName("toggle-list")
-    Cache cache;
 
     Repository<String, Toggle> repository;
 
@@ -60,10 +50,7 @@ public class Service {
      * @throws JsonProcessingException If the feature-toggle or variation key is
      *                                 invalid.
      */
-    @CacheInvalidateAll(cacheName = "toggle")
-    @CacheInvalidateAll(cacheName = "toggle-list")
-    @CacheInvalidateAll(cacheName = "toggle-status")
-    public void toggle(@CacheKey String key, @CacheKey String variationKey)
+    public void toggle(String key, String variationKey)
             throws JsonMappingException, JsonProcessingException {
         final var projectKey = context.getProjectKey();
         final var environment = context.getEnvironment();
@@ -111,10 +98,7 @@ public class Service {
      * @throws JsonProcessingException
      * @throws JsonMappingException
      */
-    @CacheInvalidateAll(cacheName = "toggle")
-    @CacheInvalidateAll(cacheName = "toggle-list")
-    @CacheInvalidateAll(cacheName = "toggle-status")
-    public void addToggleVariation(AddToggleVariationRequest request, @CacheKey String key)
+    public void addToggleVariation(AddToggleVariationRequest request, String key)
             throws JsonMappingException, JsonProcessingException {
         final var projectKey = context.getProjectKey();
 
@@ -194,9 +178,6 @@ public class Service {
      * @param projectKey the project key
      * @throws JsonProcessingException
      */
-    @CacheInvalidateAll(cacheName = "toggle")
-    @CacheInvalidateAll(cacheName = "toggle-list")
-    @CacheInvalidateAll(cacheName = "toggle-status")
     public void createNewToggle(NewToggleRequest request) throws JsonProcessingException {
         // Create a new toggle configuration
         final var projectKey = context.getProjectKey();
@@ -231,10 +212,7 @@ public class Service {
         }
     }
 
-    @CacheInvalidateAll(cacheName = "toggle")
-    @CacheInvalidateAll(cacheName = "toggle-list")
-    @CacheInvalidateAll(cacheName = "toggle-status")
-    public void removeToggle(@CacheKey String key) {
+    public void removeToggle(String key) {
         // Check that a toggle with the key exists
         final var projectKey = context.getProjectKey();
         for (var env : Environment.values()) {
@@ -262,8 +240,7 @@ public class Service {
      * @throws JsonMappingException
      * @throws JsonProcessingException
      */
-    @CacheResult(cacheName = "toggle")
-    public Toggle getToggle(@CacheKey String toggleKey, @CacheKey String environment) {
+    public Toggle getToggle(String toggleKey, String environment) {
         // Get the toggle configuration
         final var projectKey = context.getProjectKey();
         final var id = util.constructKey(projectKey, environment, toggleKey);
@@ -285,21 +262,19 @@ public class Service {
         final var environment = context.getEnvironment();
         final var idPattern = util.constructKey(projectKey, environment, "*");
 
-        return cache.get(idPattern, type -> {
-            final var keys = repository.getAllKeysMatching(idPattern);
-            final var toggles = keys.stream()
-                    .parallel()
-                    .map(t -> {
-                        try {
-                            return repository.get(t);
-                        } catch (ObjectNotFoundException e) {
-                            return null;
-                        }
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-            return toggles;
-        }).await().indefinitely();
+        final var keys = repository.getAllKeysMatching(idPattern);
+        final var toggles = keys.stream()
+                .parallel()
+                .map(t -> {
+                    try {
+                        return repository.get(t);
+                    } catch (ObjectNotFoundException e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        return toggles;
     }
 
     /***
@@ -310,8 +285,7 @@ public class Service {
      * @param variationKey The variation key to get status for.
      * @return Uni of Boolean, resolves non-blockingly.
      */
-    @CacheResult(cacheName = "toggle-status")
-    public Boolean getToggleStatus(@CacheKey String key, @CacheKey String variationKey) {
+    public Boolean getToggleStatus(String key, String variationKey) {
         final var variationKeyOrDefault = variationKey != null ? variationKey : "default";
         final var projectKey = context.getProjectKey();
         final var environment = context.getEnvironment();
