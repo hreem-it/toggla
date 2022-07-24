@@ -79,4 +79,3 @@ jobs:
         run: $MVN package -Pnative -DskipTests -Dquarkus.native.container-build=true
       - name: sam deploy
         run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset -t deployment/aws/sam.native.yaml --stack-name toggla --s3-bucket artifacts-gamma --capabilities CAPABILITY_IAM
-        
