@@ -10,10 +10,10 @@ permissions:
   packages: write
 
 concurrency:
-  group: ci-native
+  group: toggla-service_eu-west
 
 jobs:
-  test-native:
+  test:
     runs-on: ubuntu-latest
     env:
       MVN: mvn --show-version --batch-mode
@@ -39,13 +39,13 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: mvn clean verify -Pnative
+      - name: mvn clean verify
         working-directory: toggla-service
-        run: $MVN clean verify -Pnative
+        run: $MVN clean verify
   # Image push happens before native tests when running 'mvn clean verify -Pnative -Dquarkus.container-image.push=true', so decided to split.
-  build-native:
+  deploy-native:
     if: github.ref == 'refs/heads/master'
-    needs: test-native
+    needs: test
     runs-on: ubuntu-latest
     env:
       MVN: mvn --show-version --batch-mode
