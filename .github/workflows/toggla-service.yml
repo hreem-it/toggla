@@ -43,7 +43,10 @@ jobs:
         working-directory: toggla-service
         run: $MVN clean verify
   # Image push happens before native tests when running 'mvn clean verify -Pnative -Dquarkus.container-image.push=true', so decided to split.
-  deploy_eu-west:
+  deploy:
+    strategy:
+      matrix:
+        region: [eu-west-1]
     if: github.ref == 'refs/heads/master'
     needs: test
     runs-on: ubuntu-latest
@@ -64,7 +67,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
+          aws-region: ${{matrix.region}}
       - name: checkout
         uses: actions/checkout@v2.4.2
         with:
@@ -96,8 +99,8 @@ jobs:
       - name: optimize
         run: |
           npx lumigo-cli powertune-lambda \
-            -i 150 -n toggla-service_eu-west-1 \
+            -i 150 -n toggla-service_${{matrix.region}} \
             -s cost -v 256,512,1024 --parallelInvocation \
             -f ./deployment/aws/tuning/request-get-toggle.json \
             --autoOptimize \
-            -z -r eu-west-1
+            -z -r ${{matrix.region}}
