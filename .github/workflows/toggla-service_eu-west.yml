@@ -73,9 +73,13 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+      - name: install UPX
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y upx
       # Consider building on ARM instead
       - name: mvn package -Pnative -DskipTests -Dquarkus.native.container-build=true
         working-directory: toggla-service
-        run: $MVN package -Pnative -DskipTests -Dquarkus.native.container-build=true
+        run: $MVN package -Pnative -DskipTests -Dquarkus.native.container-build=true -Dquarkus.profile=aws
       - name: sam deploy
         run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset -t deployment/aws/sam.native.yaml --stack-name toggla --s3-bucket artifacts-gamma --capabilities CAPABILITY_IAM
