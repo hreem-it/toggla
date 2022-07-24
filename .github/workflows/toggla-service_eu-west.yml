@@ -1,12 +1,8 @@
-name: ci-native
+name: toggla-service_eu-west
 
 on:
   push:
     branches: [master]
-    paths:
-      - ".github/workflows/ci-native.yml"
-      - "toggla-service/**"
-      - "pom.xml"
   pull_request:
     branches: [master]
 
