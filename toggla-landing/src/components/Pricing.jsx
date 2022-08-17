@@ -46,7 +46,7 @@ function CheckIcon({ className }) {
   )
 }
 
-function Plan({ name, price, description, href, features, featured = false }) {
+function Plan({ name, price, transactionFee, action, description, href, features, featured = false }) {
   return (
     <section
       className={clsx(
@@ -64,7 +64,7 @@ function Plan({ name, price, description, href, features, featured = false }) {
         {description}
       </p>
       <p className="order-first font-display text-5xl font-light tracking-tight text-white">
-        {price}
+        {price} <span className={transactionFee ? "text-base" : "hidden"}> / {transactionFee}</span>
       </p>
       <ul
         role="list"
@@ -87,7 +87,7 @@ function Plan({ name, price, description, href, features, featured = false }) {
         className="mt-8"
         aria-label={`Get started with the ${name} plan for ${price}`}
       >
-        Get started
+        {action}
       </Button>
     </section>
   )
@@ -105,7 +105,7 @@ export function Pricing() {
           <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl">
             <span className="relative whitespace-nowrap">
               <SwirlyDoodle className="absolute top-1/2 left-0 h-[1em] w-full fill-blue-400" />
-              <span className="relative">Simple pricing,</span>
+              <span className="relative">Simple plans,</span>
             </span>{' '}
             for everyone.
           </h2>
@@ -116,44 +116,46 @@ export function Pricing() {
         </div>
         <div className="-mx-4 mt-16 grid max-w-2xl grid-cols-1 gap-y-10 sm:mx-auto lg:-mx-8 lg:max-w-none lg:grid-cols-3 xl:mx-0 xl:gap-x-8">
           <Plan
-            name="Starter"
-            price="$9"
-            description="Good for anyone who is self-employed and just getting started."
-            href="/register"
+            name="Self-hosted (Open Source)"
+            price="$0"
+            action="View on Github"
+            description="Good for personal projects and self-hosted setups."
+            href="https://github.com/Hreem-IT/toggla"
             features={[
-              'Send 10 quotes and invoices',
-              'Connect up to 2 bank accounts',
-              'Track up to 15 expenses per month',
-              'Manual payroll support',
-              'Export up to 3 reports',
+              'Deployment descriptors for K8s and OpenShift',
+              'SDKs for simplified integrations',
+              'Open source community',
+              'Redis backed DS',
             ]}
           />
           <Plan
             featured
             name="Small business"
-            price="$15"
+            price="$0.5"
+            action="Get started"
+            transactionFee="10 000 requests"
             description="Perfect for small / medium sized businesses."
             href="/register"
             features={[
-              'Send 25 quotes and invoices',
-              'Connect up to 5 bank accounts',
-              'Track up to 50 expenses per month',
-              'Automated payroll support',
-              'Export up to 12 reports',
-              'Bulk reconcile transactions',
-              'Track in multiple currencies',
+              'Unlimited projects',
+              'Unlimited Feature toggles',
+              'Unlimited users',
+              'A/B Testing',
+              'Conditional toggles',
+              'Reporting'
             ]}
           />
           <Plan
             name="Enterprise"
-            price="$39"
+            price="Let's talk"
             description="For even the biggest enterprise companies."
-            href="/register"
+            action="Contact us"
+            href="mailto:contact@toggla.io"
             features={[
-              'Send unlimited quotes and invoices',
-              'Connect up to 15 bank accounts',
-              'Track up to 200 expenses per month',
-              'Automated payroll support',
+              'Everything in Small Business',
+              'Support 24/7, 365 days',
+              'Team management',
+              'SAML integration',
               'Export up to 25 reports, including TPS',
             ]}
           />

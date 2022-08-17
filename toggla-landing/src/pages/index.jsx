@@ -14,10 +14,10 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>TaxPal - Accounting made simple for small businesses</title>
+        <title>Toggla - Feature Toggling made easy</title>
         <meta
           name="description"
-          content="Most bookkeeping software is accurate, but hard to use. We make the opposite trade-off, and hope you don’t get audited."
+          content="Toggla provides with simple, scalable feature flag & toggle management (feature management) for the modern enterprise and growing projects in need of agility."
         />
       </Head>
       <Header />
@@ -26,9 +26,9 @@ export default function Home() {
         <PrimaryFeatures />
         <SecondaryFeatures />
         <CallToAction />
-        <Testimonials />
+        {/* <Testimonials /> */}
         <Pricing />
-        <Faqs />
+        {/* <Faqs /> */}
       </main>
       <Footer />
     </>

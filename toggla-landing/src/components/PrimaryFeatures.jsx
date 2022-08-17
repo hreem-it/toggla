@@ -12,27 +12,27 @@ import screenshotVatReturns from '@/images/screenshots/vat-returns.png'
 
 const features = [
   {
-    title: 'Payroll',
+    title: 'Feature Toggling',
     description:
-      "Keep track of everyone's salaries and whether or not they've been paid. Direct deposit not supported.",
+      "Streamline feature rollout by creating toggles, grouping features with toggle variations and allowing environment specific configuration.",
     image: screenshotPayroll,
   },
   {
-    title: 'Claim expenses',
+    title: 'A/B Testing',
     description:
-      "All of your receipts organized into one place, as long as you don't mind typing in the data by hand.",
+      "Conduct A/B Testing of your feature by assigning success metrics and splitting traffic to 2 or more versions of your application.",
     image: screenshotExpenses,
   },
   {
-    title: 'VAT handling',
+    title: 'Conditional Toggling',
     description:
-      "We only sell our software to companies who don't deal with VAT at all, so technically we do all the VAT stuff they need.",
+      "Define custom conditions for how a toggle to behave. Allowing granular control over feature rollouts!",
     image: screenshotVatReturns,
   },
   {
     title: 'Reporting',
     description:
-      'Easily export your data into an Excel spreadsheet where you can do whatever the hell you want with it.',
+      'Easily visualize your feature management and A/B testing success metrics.',
     image: screenshotReporting,
   },
 ]
@@ -58,7 +58,7 @@ export function PrimaryFeatures() {
   return (
     <section
       id="features"
-      aria-label="Features for running your books"
+      aria-label="Features for managing your projects"
       className="relative overflow-hidden bg-blue-600 pt-20 pb-28 sm:py-32"
     >
       <Image
@@ -72,11 +72,10 @@ export function PrimaryFeatures() {
       <Container className="relative">
         <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
           <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl md:text-5xl">
-            Everything you need to run your books.
+            Everything needed to manage your features.
           </h2>
           <p className="mt-6 text-lg tracking-tight text-blue-100">
-            Well everything you need if you aren’t that picky about minor
-            details like tax compliance.
+            Toggla is a simple, easy to use, and powerful tool for managing your projects.
           </p>
         </div>
         <Tab.Group

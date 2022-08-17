@@ -10,10 +10,10 @@ import screenshotProfitLoss from '@/images/screenshots/profit-loss.png'
 
 const features = [
   {
-    name: 'Reporting',
-    summary: 'Stay on top of things with always up-to-date reporting features.',
+    name: 'Projects',
+    summary: 'Create and handle multiple feature managed projects.',
     description:
-      'We talked about reporting in the section above but we needed three items here, so mentioning it one more time for posterity.',
+      'Working with multiple projects? Or do you require granular control over each individual service? We have you covered.',
     image: screenshotProfitLoss,
     icon: function ReportingIcon() {
       let id = useId()
@@ -44,11 +44,11 @@ const features = [
     },
   },
   {
-    name: 'Inventory',
+    name: 'Environments',
     summary:
-      'Never lose track of what’s in stock with accurate inventory tracking.',
+      'Feature management for every step of your deployment lifecycle.',
     description:
-      'We don’t offer this as part of our software but that statement is inarguably true. Accurate inventory tracking would help you for sure.',
+      'Toggla provides with 4 out-of-the-box environment configurations for granular feature management, and each toggle is replicated across all environments.',
     image: screenshotInventory,
     icon: function InventoryIcon() {
       return (
@@ -74,9 +74,9 @@ const features = [
   {
     name: 'Contacts',
     summary:
-      'Organize all of your contacts, service providers, and invoices in one place.',
+      'Organize all of your team members under one banner.',
     description:
-      'This also isn’t actually a feature, it’s just some friendly advice. We definitely recommend that you do this, you’ll feel really organized and professional.',
+      'This isn’t actually a feature, it’s just something we need. Invite team members and organize everyone under the set of services you provide.',
     image: screenshotContacts,
     icon: function ContactsIcon() {
       return (
@@ -216,11 +216,10 @@ export function SecondaryFeatures() {
       <Container>
         <div className="mx-auto max-w-2xl md:text-center">
           <h2 className="font-display text-3xl tracking-tight text-slate-900 sm:text-4xl">
-            Simplify everyday business tasks.
+            Feature Management, as it should've been.
           </h2>
           <p className="mt-4 text-lg tracking-tight text-slate-700">
-            Because you’d probably be a little confused if we suggested you
-            complicate your everyday business tasks instead.
+            Simplicity, scalability and affordability is at the core of our values. We want to make it easy to manage your features. <span className="text-blue-500">We want you to succeed!</span>
           </p>
         </div>
         <FeaturesMobile />

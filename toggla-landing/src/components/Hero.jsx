@@ -13,7 +13,7 @@ export function Hero() {
   return (
     <Container className="pt-20 pb-16 text-center lg:pt-32">
       <h1 className="mx-auto max-w-4xl font-display text-5xl font-medium tracking-tight text-slate-900 sm:text-7xl">
-        Accounting{' '}
+        Feature Management{' '}
         <span className="relative whitespace-nowrap text-blue-600">
           <svg
             aria-hidden="true"
@@ -25,30 +25,26 @@ export function Hero() {
           </svg>
           <span className="relative">made simple</span>
         </span>{' '}
-        for small businesses.
+        for everyone!
       </h1>
       <p className="mx-auto mt-6 max-w-2xl text-lg tracking-tight text-slate-700">
-        Most bookkeeping software is accurate, but hard to use. We make the
-        opposite trade-off, and hope you don’t get audited.
+      Toggla provides with simple, scalable feature flag & toggle management (feature management) for the modern enterprise and growing projects in need of agility.
+      </p>
+      <p className="mx-auto mt-6 max-w-2xl text-lg tracking-tight text-slate-700">
+      Fully <span className='text-red-500'>serverless</span> 🚀, <span className='text-green-700'>pay-per-use with a generous free-tier</span> ✅ and <span className='text-blue-500'>open source</span>!
       </p>
       <div className="mt-10 flex justify-center gap-x-6">
-        <Button href="/register">Get 6 months free</Button>
+        <Button href="/register">Get started for free!</Button>
         <Button
           href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
           variant="outline"
         >
-          <svg
-            aria-hidden="true"
-            className="h-3 w-3 flex-none fill-blue-600 group-active:fill-current"
-          >
-            <path d="m9.997 6.91-7.583 3.447A1 1 0 0 1 1 9.447V2.553a1 1 0 0 1 1.414-.91L9.997 5.09c.782.355.782 1.465 0 1.82Z" />
-          </svg>
-          <span className="ml-3">Watch video</span>
+          <span >Documentation</span>
         </Button>
       </div>
-      <div className="mt-36 lg:mt-44">
+      <div className="hidden mt-36 lg:mt-44">
         <p className="font-display text-base text-slate-900">
-          Trusted by these six companies so far
+          Used by <span className="text-red-500">1,000,000+</span> projects worldwide
         </p>
         <ul
           role="list"
