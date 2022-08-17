@@ -8,7 +8,7 @@ build-images:
 
 	cd toggla-service \
 	&& ./mvnw clean package -Pnative \
-	&& ./mvnw package -Pnative -Dquarkus.container-image.build=true 
+	&& ./mvnw package -Pnative -Dquarkus.container-image.build=true -Dquarkus.native.container-build=true
 
 build-artifacts-native:
 	cd toggla-web \
@@ -38,7 +38,7 @@ create-artifacts-for-release:
 	&& zip -r toggla-web.zip build/*
 
 	cd toggla-service \
-	&& ./mvnw clean package -Pnative \
+	&& ./mvnw clean package -Pnative -DskipTests \
 	&& cd target && mkdir drop \
 	&& cp toggla-service-*-runner drop \
 	&& cp -r quarkus-app/* *.jar drop \
@@ -46,7 +46,7 @@ create-artifacts-for-release:
 
 release:
 	cd toggla-web \
-	&& gh release create web-v1.1.0 -t "Toggla Web (1.1.0)" './toggla-web.zip#Toggla Web Artifact - 1.1.0 (ZIP)'
+	&& gh release create web-v1.2.0 -t "Toggla Web (1.2.0)" './toggla-web.zip#Toggla Web Artifact - 1.2.0 (ZIP)'
 
 	cd toggla-service/target \
-	&& gh release create service-v1.1.0 -t "Toggla Service (1.1.0)" './toggla-service.zip#Toggla Service Artifact - 1.1.0 (ZIP)'
+	&& gh release create service-v1.2.0 -t "Toggla Service (1.2.0)" './toggla-service.zip#Toggla Service Artifact - 1.2.0 (ZIP)'

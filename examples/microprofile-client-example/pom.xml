@@ -4,7 +4,7 @@
 
     <groupId>io.hreem.toggla.examples</groupId>
     <artifactId>microprofile-client-example</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <packaging>war</packaging>
 
     <properties>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>io.hreem.toggla</groupId>
             <artifactId>microprofile-toggla</artifactId>
-            <version>1.1.0</version>
+            <version>1.2.0</version>
         </dependency>
     </dependencies>
 
