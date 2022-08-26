@@ -47,6 +47,7 @@ public class Resource {
     @Inject
     Service toggleService;
 
+
     @GET
     @Operation(summary = "Get all toggles for a project key")
     public Response getToggles() {
@@ -57,8 +58,7 @@ public class Resource {
     @GET
     @Path("/{key}")
     @Operation(summary = "Get detailed information about a toggle")
-    public Response getToggleData(@PathParam("key") String key)
-            throws JsonMappingException, JsonProcessingException {
+    public Response getToggleData(@PathParam("key") String key) {
         final var response = toggleService.getToggle(key);
         if (response == null)
             throw new NotFoundException();
@@ -70,8 +70,7 @@ public class Resource {
     @Path("/{key}/status")
     @Operation(summary = "Recommended: Get the status of a toggle")
     public Boolean getToggleStatus(
-            @PathParam("key") String key)
-            throws JsonMappingException, JsonProcessingException {
+            @PathParam("key") String key) {
         return getToggleStatusForVariation(key, "default");
     }
 
@@ -79,17 +78,14 @@ public class Resource {
     @Path("/{key}/{variationKey}/status")
     @Operation(summary = "Recommended: Get the status of a toggle and a variation")
     public Boolean getToggleStatusForVariation(
-            @PathParam("key") String key, @PathParam("variationKey") String variationKey)
-            throws JsonMappingException, JsonProcessingException {
+            @PathParam("key") String key, @PathParam("variationKey") String variationKey) {
         return toggleService.getToggleStatus(key, variationKey);
     }
 
     @PUT
     @Path("/{key}")
     @Operation(summary = "Enable/Disable a toggle")
-    public Response toggle(@PathParam("key") String key,
-            @PathParam("variationKey") String variationKey)
-            throws JsonMappingException, JsonProcessingException {
+    public Response toggle(@PathParam("key") String key) throws JsonProcessingException {
         return toggleVariation(key, "default");
     }
 
@@ -109,6 +105,7 @@ public class Resource {
     public Response createToggle(@Valid NewToggleRequest request)
             throws JsonProcessingException {
         log.infof("Creating a new toggle with key %s", request.key());
+        Utils.validateRequest(request);
         toggleService.createNewToggle(request);
 
         final var uri = uriInfo.getAbsolutePathBuilder().path(request.key()).build();

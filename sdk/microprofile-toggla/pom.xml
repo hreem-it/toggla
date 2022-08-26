@@ -5,6 +5,7 @@
   <groupId>io.hreem.toggla</groupId>
   <artifactId>microprofile-toggla</artifactId>
   <version>1.2.0</version>
+  <name>Examples : Toggla API Based Client</name>
 
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>

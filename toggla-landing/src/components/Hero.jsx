@@ -31,7 +31,7 @@ export function Hero() {
       Toggla provides with simple, scalable feature flag & toggle management (feature management) for the modern enterprise and growing projects in need of agility.
       </p>
       <p className="mx-auto mt-6 max-w-2xl text-lg tracking-tight text-slate-700">
-      Fully <span className='text-red-500'>serverless</span> 🚀, <span className='text-green-700'>pay-per-use with a generous free-tier</span> ✅ and <span className='text-blue-500'>open source</span>!
+      Fully <span className='text-red-500'>serverless</span> 🚀, <span className='text-green-700'>pay-per-use</span> ✅ and <span className='text-blue-500'>open source</span>!
       </p>
       <div className="mt-10 flex justify-center gap-x-6">
         <Button href="/register">Get started for free!</Button>

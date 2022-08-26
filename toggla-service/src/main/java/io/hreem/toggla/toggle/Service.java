@@ -42,7 +42,6 @@ public class Service {
     /**
      * Toggle an existing feature-toggle.
      * 
-     * @param projectKey   The project key.
      * @param key          The feature-toggle key.
      * @param variationKey The variation key.
      * @throws JsonMappingException    If the feature-toggle or variation key is
@@ -93,13 +92,11 @@ public class Service {
      * Create a new feature-toggle variation.
      * 
      * @param request    The new feature-toggle variation request.
-     * @param projectKey The project key.
      * @param key        The feature-toggle key.
      * @throws JsonProcessingException
      * @throws JsonMappingException
      */
-    public void addToggleVariation(AddToggleVariationRequest request, String key)
-            throws JsonMappingException, JsonProcessingException {
+    public void addToggleVariation(AddToggleVariationRequest request, String key) {
         final var projectKey = context.getProjectKey();
 
         // Create new variation
@@ -135,14 +132,12 @@ public class Service {
     /**
      * Remove a feature-toggle variation.
      * 
-     * @param projectKey   The project key.
      * @param key          The feature-toggle key.
      * @param variationKey The variation key.
      * @throws JsonProcessingException If the feature-toggle or variation key is
      * @throws JsonMappingException    If the feature-toggle or variation key is
      */
-    public void removeToggleVariation(String key, String variationKey)
-            throws JsonMappingException, JsonProcessingException {
+    public void removeToggleVariation(String key, String variationKey) {
         final var projectKey = context.getProjectKey();
         final var environment = context.getEnvironment();
         // Find toggle
@@ -175,10 +170,9 @@ public class Service {
      * Creates a new toggle configuration and saves it to the datastore.
      * 
      * @param request    the new toggle configuration
-     * @param projectKey the project key
      * @throws JsonProcessingException
      */
-    public void createNewToggle(NewToggleRequest request) throws JsonProcessingException {
+    public void createNewToggle(NewToggleRequest request) {
         // Create a new toggle configuration
         final var projectKey = context.getProjectKey();
         final var environment = Environment.valueOf(context.getEnvironment());
@@ -234,7 +228,6 @@ public class Service {
     /**
      * Gets a toggle configuration from the datastore.
      * 
-     * @param projectKey The project key
      * @param toggleKey  The toggle key
      * @return Toggle or null if the toggle does not exist
      * @throws JsonMappingException
@@ -254,7 +247,6 @@ public class Service {
     /**
      * Gets all toggle configurations from the datastore for a given project key.
      * 
-     * @param projectKey The project key to get toggles for.
      * @return List of toggles.
      */
     public List<Toggle> getAllToggles() {
@@ -280,7 +272,6 @@ public class Service {
     /***
      * Get toggle status from the datastore for a given project key.
      * 
-     * @param projectKey   The project key to get toggle status for.
      * @param key          The toggle key to get status for.
      * @param variationKey The variation key to get status for.
      * @return Uni of Boolean, resolves non-blockingly.

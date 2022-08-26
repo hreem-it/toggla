@@ -110,8 +110,7 @@ export function Pricing() {
             for everyone.
           </h2>
           <p className="mt-4 text-lg text-slate-400">
-            It doesn’t matter what size your business is, our software won’t
-            work well for you.
+            It doesn’t matter what size your business is, toggla will help you ship your features faster!
           </p>
         </div>
         <div className="-mx-4 mt-16 grid max-w-2xl grid-cols-1 gap-y-10 sm:mx-auto lg:-mx-8 lg:max-w-none lg:grid-cols-3 xl:mx-0 xl:gap-x-8">
@@ -154,9 +153,9 @@ export function Pricing() {
             features={[
               'Everything in Small Business',
               'Support 24/7, 365 days',
+              'Granular permissions',
               'Team management',
-              'SAML integration',
-              'Export up to 25 reports, including TPS',
+              'AD integration',
             ]}
           />
         </div>

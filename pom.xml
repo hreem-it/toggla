@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>io.hreem.toggla</groupId>
+  <artifactId>toggla</artifactId>
+  <version>1.3.0</version>
+  <packaging>pom</packaging>
+
+  <name>Toggla : Aggregator</name>
+
+
+  <modules>
+    <module>toggla-service</module>
+    <module>examples/api-based-client</module>
+    <module>examples/microprofile-client-example</module>
+    <module>examples/quarkus-client-example</module>
+    <module>sdk/microprofile-toggla</module>
+    <module>sdk/quarkus-toggla</module>
+  </modules>
+
+</project>

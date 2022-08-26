@@ -33,7 +33,7 @@ export function Footer() {
               </svg>
             </Link>
             <Link
-              href="https://github.com"
+              href="https://github.com/hreem-it/toggla"
               className="group"
               aria-label="Toggla on GitHub"
             >

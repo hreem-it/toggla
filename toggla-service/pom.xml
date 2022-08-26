@@ -6,6 +6,7 @@
   <groupId>io.hreem.toggla</groupId>
   <artifactId>toggla-service</artifactId>
   <version>1.2.0</version>
+  <name>Toggla Service</name>
 
   <properties>
     <!-- Core project properties -->
@@ -17,10 +18,11 @@
     <!-- Dependendency properties -->
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-    <quarkus.platform.version>2.10.3.Final</quarkus.platform.version>
+    <quarkus.platform.version>2.11.3.Final</quarkus.platform.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
     <failsafe.useModulePath>false</failsafe.useModulePath>
+    <lombok.version>1.18.24</lombok.version>
   </properties>
 
   <dependencyManagement>
@@ -39,7 +41,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.24</version>
+      <version>${lombok.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -149,7 +151,6 @@
       </plugin>
     </plugins>
   </build>
-
   <profiles>
 
     <profile>

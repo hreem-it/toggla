@@ -18,7 +18,7 @@ const features = [
     image: screenshotPayroll,
   },
   {
-    title: 'A/B Testing',
+    title: 'A/B Testing (Coming Soon)',
     description:
       "Conduct A/B Testing of your feature by assigning success metrics and splitting traffic to 2 or more versions of your application.",
     image: screenshotExpenses,
@@ -30,7 +30,7 @@ const features = [
     image: screenshotVatReturns,
   },
   {
-    title: 'Reporting',
+    title: 'Reporting (Coming Soon)',
     description:
       'Easily visualize your feature management and A/B testing success metrics.',
     image: screenshotReporting,
@@ -75,7 +75,7 @@ export function PrimaryFeatures() {
             Everything needed to manage your features.
           </h2>
           <p className="mt-6 text-lg tracking-tight text-blue-100">
-            Toggla is a simple, easy to use, and powerful tool for managing your projects.
+            Toggla is a simple, easy to use, and powerful tool for managing your project's features.
           </p>
         </div>
         <Tab.Group

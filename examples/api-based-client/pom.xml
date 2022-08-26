@@ -6,6 +6,8 @@
   <artifactId>api-based-client</artifactId>
   <version>1.0.0</version>
 
+  <name>Examples : Toggla API Based Client</name>
+
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
     <maven.compiler.release>17</maven.compiler.release>
